@@ -1,0 +1,55 @@
+version: '3.7'
+services:
+  bidata-core:
+    build:
+      context: .
+      target: base
+      args:
+        ENV: local
+    image: bidata-core
+    ports:
+      - 9000:9000
+    volumes:
+      - .:/usr/src/app
+    command: yarn dev
+
+  bidata-mongo-core:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_DATABASE: bidata
+    volumes:
+      - mongodb_data_container:/data/db
+
+  bidata-postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data_container:/var/lib/postgresql/data
+
+  bidata-mongo-express:
+    image: mongo-express:latest
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=bidata-mongo-core
+      - ME_CONFIG_MONGODB_PORT=27017
+    depends_on:
+        - bidata-mongo-core
+    ports:
+      - 27080:8081
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@bidata.local
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 54080:80
+
+
+volumes:
+  mongodb_data_container:
+  postgres_data_container:
