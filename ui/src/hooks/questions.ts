@@ -166,9 +166,9 @@ export const useQuestion = (questionId: string) => {
     error: error || errorQuestion || errorQuestionExecution,
     question: connection
       ? {
-          ...(updatedQuestion || question),
-          connection,
-        }
+        ...(updatedQuestion || question),
+        connection,
+      }
       : undefined,
     execution: questionExecution || lastExecution,
     waiting: loadingQuestionUpdate || loadingQuestionExecution,

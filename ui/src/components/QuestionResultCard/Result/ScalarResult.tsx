@@ -11,7 +11,7 @@ export default React.memo(({ data, settings }: ResultProps) => (
     justifyContent="center"
     height="calc(100% - 50px)"
   >
-    <Value gutterBottom variant="h1">
+    <Value gutterBottom variant="h2">
       {settings.key ? data[0][settings.key] : data[0]}
     </Value>
   </Box>

@@ -1,4 +1,4 @@
-import { Client, Action } from 'react-fetching-library'
+import { Action } from 'react-fetching-library'
 
 export const API = process.env.REACT_APP_API_HOST
 
@@ -157,3 +157,8 @@ export const fetchDashboardsAction: Action = {
   method: 'GET',
   endpoint: '/dashboards',
 }
+
+export const fetchDashboardAction: (dashboardId: string) => Action = (dashboardId) => ({
+  method: 'GET',
+  endpoint: `/dashboards/${dashboardId}`
+})
