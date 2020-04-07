@@ -110,9 +110,7 @@ export default ({ open, onClose, onSuccess }: Props) => {
             onChange={({ target: { value } }) => {
               setConnection(value as string)
               setConnectionDriver(
-                (connections as any[]).find(
-                  (c) => c._id === value
-                ).driver
+                (connections as any[]).find((c) => c._id === value).driver
               )
             }}
           >

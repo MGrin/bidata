@@ -2,9 +2,7 @@ import { Client, Action } from 'react-fetching-library'
 
 export const API = process.env.REACT_APP_API_HOST
 
-export const requestHostInterceptor = () => async (
-  action: Action
-) => {
+export const requestHostInterceptor = () => async (action: Action) => {
   return {
     ...action,
     endpoint: `${API}${action.endpoint}`,
@@ -118,9 +116,7 @@ export const createQuestionExecution: (
   body: data,
 })
 
-export const fetchResultAction: (resultId: string) => Action = (
-  resultId
-) => ({
+export const fetchResultAction: (resultId: string) => Action = (resultId) => ({
   method: 'GET',
   endpoint: `/results/${resultId}`,
 })

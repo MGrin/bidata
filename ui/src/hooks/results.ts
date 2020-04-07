@@ -14,11 +14,11 @@ type UseResultState = {
 }
 type UseResultAction = {
   type:
-  | 'START_QUERY'
-  | 'FINISH_QUERY_SUCCESSFULLY'
-  | 'FINISH_QUERY_WITH_ERROR'
-  | 'FINISH_QUERY_WITH_ERROR'
-  | 'REPLACE_EXECUTION'
+    | 'START_QUERY'
+    | 'FINISH_QUERY_SUCCESSFULLY'
+    | 'FINISH_QUERY_WITH_ERROR'
+    | 'FINISH_QUERY_WITH_ERROR'
+    | 'REPLACE_EXECUTION'
   payload?: any
 }
 type UseResultReducer = React.Reducer<UseResultState, UseResultAction>
