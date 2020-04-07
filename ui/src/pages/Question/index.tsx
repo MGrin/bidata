@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 import { Box } from '@material-ui/core'
 import { QuestionResultCard } from '../../components'
-import { useQuestion } from './hooks'
+import { useQuestion } from '../../hooks'
 import Toolbar from './Toolbar'
 import QueryEditor from './QueryEditor'
 import VisualSettingsForm from './VisualSettingsForm'
@@ -10,15 +10,26 @@ import VisualSettingsForm from './VisualSettingsForm'
 export default () => {
   const history = useHistory()
   const location = useLocation<{ title?: string }>()
-  const match = useRouteMatch< { question_id: string }>()
+  const match = useRouteMatch<{ question_id: string }>()
   const { question_id } = match.params
 
-  const { loading, error, question, execution, waiting, save, run, updateSettings } = useQuestion(question_id)
+  const {
+    loading,
+    error,
+    question,
+    execution,
+    waiting,
+    save,
+    run,
+    updateSettings,
+  } = useQuestion(question_id)
   const [modified, setModified] = React.useState(false)
   const [query, setQuery] = React.useState('')
   const [settings, setSettings] = React.useState()
-  const [visualType, setVisualType] = React.useState()
-  const [isVisualSettingsFormOpen, setVisualSettingsFormOpen] = React.useState(false)
+  const [visualType, setVisualType] = React.useState<string>()
+  const [isVisualSettingsFormOpen, setVisualSettingsFormOpen] = React.useState(
+    false
+  )
 
   React.useEffect(() => {
     if (question && !query) {
@@ -44,15 +55,15 @@ export default () => {
     }
   }
 
-  const handleVisualTypeChange = (type: string, settings: any) => {
+  const handleVisualTypeChange = (type: string, currentSettings: any) => {
     setVisualType(type)
-    setSettings(settings)
+    setSettings(currentSettings)
     setVisualSettingsFormOpen(true)
   }
 
   const updateQuestionSettings = async (updatedSettings: any) => {
     const newSettings = {
-      ...updatedSettings
+      ...updatedSettings,
     }
     newSettings.type = visualType
     setSettings(newSettings)
@@ -92,14 +103,16 @@ export default () => {
                 settings={settings}
                 requestVisualTypeChange={handleVisualTypeChange}
                 openVisualSettingsForm={() => {
-                  setVisualType(settings.type)
+                  setVisualType(settings ? settings.type : undefined)
                   setVisualSettingsFormOpen(true)
                 }}
                 editable
-                onResultUpdate={(result: any) => setSettings({
-                  ...settings,
-                  columns: result.columns
-                })}
+                onResultUpdate={(result: any) =>
+                  setSettings({
+                    ...settings,
+                    columns: result.columns,
+                  })
+                }
               />
             </Box>
           )}
@@ -108,7 +121,7 @@ export default () => {
             onClose={() => setVisualSettingsFormOpen(false)}
             onSubmit={updateQuestionSettings}
             settings={settings}
-            type={visualType}
+            type={visualType || ''}
           />
         </Box>
       )}

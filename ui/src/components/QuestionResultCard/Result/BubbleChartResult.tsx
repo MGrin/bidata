@@ -1,13 +1,19 @@
 import * as React from 'react'
 import { Box } from '@material-ui/core'
 import { AutoSizer } from 'react-virtualized'
-import { ScatterChart, CartesianGrid, XAxis, YAxis, ZAxis, Tooltip, Legend, Scatter } from 'recharts'
+import {
+  ScatterChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ZAxis,
+  Tooltip,
+  Legend,
+  Scatter,
+} from 'recharts'
 import { ResultProps } from '.'
 
-export default ({
-  data,
-  settings
-}: ResultProps) => {
+export default ({ data, settings }: ResultProps) => {
   const xKey = settings['chart.bubble'].xAxis
   const yKey = settings['chart.bubble'].yAxis
   const zKeys = settings['chart.bubble'].zAxis
@@ -22,7 +28,7 @@ export default ({
     for (const zKey of zKeys) {
       typedDatum[zKey] = parseFloat(datum[zKey])
     }
-    
+
     return typedDatum
   })
 
@@ -31,11 +37,7 @@ export default ({
     <Box pr={3} width="calc(100% - 16)" height="calc(100% - 50px)">
       <AutoSizer>
         {({ width, height }) => (
-          <ScatterChart
-            width={width}
-            height={height}
-            data={data}
-          >
+          <ScatterChart width={width} height={height} data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey={xKey} name={xKey} />
             <YAxis dataKey={yKey} name={yKey} />

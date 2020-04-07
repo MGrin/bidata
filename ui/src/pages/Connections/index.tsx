@@ -1,13 +1,29 @@
 import * as React from 'react'
-import { Container, ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails, Button, Box, TableContainer, TableRow, Table, TableBody, TableCell, TableHead } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import AddIcon from '@material-ui/icons/Add';
+import {
+  Container,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  Typography,
+  ExpansionPanelDetails,
+  Button,
+  Box,
+  TableContainer,
+  TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+} from '@material-ui/core'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import AddIcon from '@material-ui/icons/Add'
 import ConnectionForm from './ConnectionForm'
 import ConnectionRow from './ConnectionRow'
 import { useConnections } from '../../hooks'
 
 export default () => {
-  const { loading, error, drivers, connections, query } = useConnections('driver')
+  const { loading, error, drivers, connections, query } = useConnections(
+    'driver'
+  )
   const [editingConnection, setEditingConnection] = React.useState()
   const [submitting, setSubmitting] = React.useState(false)
   const [isConnectionFormOpen, setConnectionFormOpen] = React.useState(false)
@@ -48,18 +64,10 @@ export default () => {
                       <TableHead>
                         <TableRow>
                           <TableCell />
-                          <TableCell>
-                            Name
-                          </TableCell>
-                          <TableCell>
-                            Username
-                          </TableCell>
-                          <TableCell>
-                            Hosts
-                          </TableCell>
-                          <TableCell>
-                            Database
-                          </TableCell>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Username</TableCell>
+                          <TableCell>Hosts</TableCell>
+                          <TableCell>Database</TableCell>
                           <TableCell />
                         </TableRow>
                       </TableHead>
@@ -74,7 +82,6 @@ export default () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
-                  
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             ))}

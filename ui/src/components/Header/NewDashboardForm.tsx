@@ -1,11 +1,30 @@
 import * as React from 'react'
-import { Box, Dialog, DialogProps, DialogTitle, DialogContent, FormControl, Typography, LinearProgress, DialogActions, Button, TextField, InputLabel, Select, Chip, Input, MenuItem, DialogContentText } from '@material-ui/core'
+import {
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormControl,
+  Typography,
+  LinearProgress,
+  DialogActions,
+  Button,
+  TextField,
+  InputLabel,
+  Select,
+  Chip,
+  Input,
+  MenuItem,
+  DialogContentText,
+} from '@material-ui/core'
 import { useMutation } from 'react-fetching-library'
-import DashboardIcon from '@material-ui/icons/Dashboard';
+import DashboardIcon from '@material-ui/icons/Dashboard'
 import { createDashboardAction } from '../../service'
 import { useQuestions } from '../../hooks'
 
-type Props = DialogProps & {
+type Props = {
+  open: boolean
+  onClose: () => void
   onSuccess: (dashboard: any) => void
 }
 
@@ -17,13 +36,15 @@ const validate = (name: string) => {
   return true
 }
 
-export default ({
-  open,
-  onClose,
-  onSuccess,
-}: Props) => {
-  const { loading: loadingQuestions, questions: availableQuestions, fetchQuestions } = useQuestions()
-  const { loading: loadingSubmission, mutate: createDashboard } = useMutation(createDashboardAction)
+export default ({ open, onClose, onSuccess }: Props) => {
+  const {
+    loading: loadingQuestions,
+    questions: availableQuestions,
+    fetchQuestions,
+  } = useQuestions()
+  const { loading: loadingSubmission, mutate: createDashboard } = useMutation(
+    createDashboardAction
+  )
   const loading = loadingQuestions || loadingSubmission
 
   const [name, setName] = React.useState('')
@@ -53,7 +74,10 @@ export default ({
       updateFrequency,
       questions,
     }
-    const { payload: mutationPayload, error: mutationError} = await createDashboard(dashboardData)
+    const {
+      payload: mutationPayload,
+      error: mutationError,
+    } = await createDashboard(dashboardData)
     if (mutationError) {
       return setError(mutationPayload)
     }
@@ -62,12 +86,15 @@ export default ({
   }
 
   return (
-    <Dialog open={open} onClose={(e, s) => {
-      clearForm()
-      if (onClose) {
-        onClose(e, 'escapeKeyDown')
-      }
-    }}>
+    <Dialog
+      open={open}
+      onClose={(e, s) => {
+        clearForm()
+        if (onClose) {
+          onClose()
+        }
+      }}
+    >
       <DialogTitle>
         <Box display="flex" flexDirection="row" alignItems="center">
           <DashboardIcon />
@@ -77,7 +104,8 @@ export default ({
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          To create new dashboard, please provide a name and a list of questions. Don't worry, you'll be able to change this list later
+          To create new dashboard, please provide a name and a list of
+          questions. Don't worry, you'll be able to change this list later
         </DialogContentText>
         <FormControl fullWidth disabled={loading}>
           <TextField
@@ -101,34 +129,41 @@ export default ({
           />
         </FormControl>
         <FormControl fullWidth disabled={loading}>
-          <InputLabel id="questions-selector-label">
-            Questions
-          </InputLabel>
+          <InputLabel id="questions-selector-label">Questions</InputLabel>
           <Select
             labelId="questions-selector-label"
             id="questions-selector"
             multiple
             value={questions}
-            onChange={({ target: { value }}) => setQuestions(value as string[])}
+            onChange={({ target: { value } }) =>
+              setQuestions(value as string[])
+            }
             input={<Input id="questions-selector-input" />}
-            renderValue={selected => (
+            renderValue={(selected) =>
               (selected as string[]).map((questionId) => (
                 <Chip
                   key={questionId}
-                  label={availableQuestions.find(({ _id }: any) => _id === questionId).name}
+                  label={
+                    availableQuestions.find(
+                      ({ _id }: any) => _id === questionId
+                    ).name
+                  }
                 />
               ))
-            )}
+            }
           >
-            {availableQuestions && availableQuestions.map((question: any) => (
-              <MenuItem key={question._id} value={question._id}>
-                {question.name}
-              </MenuItem>
-            ))}
+            {availableQuestions &&
+              availableQuestions.map((question: any) => (
+                <MenuItem key={question._id} value={question._id}>
+                  {question.name}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
         {error && (
-          <Typography color="error" variant="caption">Error: {error && error.message}</Typography>
+          <Typography color="error" variant="caption">
+            Error: {error && error.message}
+          </Typography>
         )}
         {loading && <LinearProgress />}
       </DialogContent>
@@ -138,7 +173,7 @@ export default ({
           onClick={(e) => {
             clearForm()
             if (onClose) {
-              onClose(e, 'escapeKeyDown')
+              onClose()
             }
           }}
           color="secondary"

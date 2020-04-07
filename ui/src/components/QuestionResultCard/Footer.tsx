@@ -1,12 +1,18 @@
 import * as React from 'react'
-import { Box, Typography, BoxProps, IconButton, Tooltip } from '@material-ui/core'
+import {
+  Box,
+  Typography,
+  BoxProps,
+  IconButton,
+  Tooltip,
+} from '@material-ui/core'
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab'
-import ListIcon from '@material-ui/icons/List';
-import TimelineIcon from '@material-ui/icons/Timeline';
-import PieChartIcon from '@material-ui/icons/PieChart';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import BubbleChartIcon from '@material-ui/icons/BubbleChart';
-import SettingsIcon from '@material-ui/icons/Settings';
+import ListIcon from '@material-ui/icons/List'
+import TimelineIcon from '@material-ui/icons/Timeline'
+import PieChartIcon from '@material-ui/icons/PieChart'
+import BarChartIcon from '@material-ui/icons/BarChart'
+import BubbleChartIcon from '@material-ui/icons/BubbleChart'
+import SettingsIcon from '@material-ui/icons/Settings'
 // @ts-ignore
 import ReactTimeAgo from 'react-time-ago'
 import { parseISO } from 'date-fns'
@@ -14,9 +20,9 @@ import { parseISO } from 'date-fns'
 type FooterProps = {
   children: React.ElementType
   settings: any
-  execution: any,
-  driver: string,
-  editable: boolean,
+  execution: any
+  driver: string
+  editable: boolean
   requestVisualTypeChange: (type: string, settings: any) => void
   openVisualSettingsForm: () => void
 } & BoxProps
@@ -31,11 +37,14 @@ export default ({
   openVisualSettingsForm,
   ...props
 }: FooterProps) => {
-  const handleVisualTypeChange = (event: React.MouseEvent<HTMLElement>, newType: string | null) => {
+  const handleVisualTypeChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newType: string | null
+  ) => {
     if (newType) {
-      requestVisualTypeChange(newType, settings);
+      requestVisualTypeChange(newType, settings)
     }
-  };
+  }
 
   return (
     <Box
@@ -44,7 +53,7 @@ export default ({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
       }}
     >
       <Box p={2}>
@@ -62,36 +71,53 @@ export default ({
             exclusive
             onChange={handleVisualTypeChange}
           >
-            
-            <ToggleButton value={driver === 'mongodb' ? 'documents' : 'columns'}>
+            <ToggleButton
+              value={driver === 'mongodb' ? 'documents' : 'columns'}
+            >
               <Tooltip title="Table" placement="top" arrow>
-                <ListIcon color={settings.type === 'documents' || settings.type === 'columns' ? 'primary' : undefined}/>
+                <ListIcon
+                  color={
+                    settings.type === 'documents' || settings.type === 'columns'
+                      ? 'primary'
+                      : undefined
+                  }
+                />
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="chart.line">
               <Tooltip title="Line chart" placement="top" arrow>
-                <TimelineIcon color={settings.type === 'chart.line' ? 'primary' : undefined}/>
+                <TimelineIcon
+                  color={settings.type === 'chart.line' ? 'primary' : undefined}
+                />
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="chart.pie">
               <Tooltip title="Pie chart" placement="top" arrow>
-                <PieChartIcon color={settings.type === 'chart.pie' ? 'primary' : undefined}/>
+                <PieChartIcon
+                  color={settings.type === 'chart.pie' ? 'primary' : undefined}
+                />
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="chart.bar">
               <Tooltip title="Bar chart" placement="top" arrow>
-                <BarChartIcon color={settings.type === 'chart.bar' ? 'primary' : undefined}/>
+                <BarChartIcon
+                  color={settings.type === 'chart.bar' ? 'primary' : undefined}
+                />
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="chart.bubble">
               <Tooltip title="Bubble chart" placement="top" arrow>
-                <BubbleChartIcon color={settings.type === 'chart.bubble' ? 'primary' : undefined}/>
+                <BubbleChartIcon
+                  color={
+                    settings.type === 'chart.bubble' ? 'primary' : undefined
+                  }
+                />
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
-          
+
           <Box ml={1}>
-            {(settings.type !== 'documents' && settings.type !== 'columns') && (
+            {settings.type !== 'documents' && settings.type !== 'columns' && (
               <IconButton onClick={openVisualSettingsForm}>
                 <SettingsIcon color="primary" className="clickable" />
               </IconButton>
@@ -99,7 +125,11 @@ export default ({
           </Box>
         </Box>
       )}
-      {(settings.type === 'documents' || settings.type === 'columns') ? children : <Box />}
+      {settings.type === 'documents' || settings.type === 'columns' ? (
+        children
+      ) : (
+        <Box />
+      )}
     </Box>
   )
 }

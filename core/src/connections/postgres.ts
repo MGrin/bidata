@@ -1,17 +1,19 @@
 import { Pool } from 'pg'
 import AbstractConnection, { QueryResult } from './AConnection'
-import { BIDataPostgresConnectionParams } from '../api/connections';
+import { BIDataPostgresConnectionParams } from '../api/connections'
 
-export default class PostgresConnection extends AbstractConnection<BIDataPostgresConnectionParams> {
+export default class PostgresConnection extends AbstractConnection<
+  BIDataPostgresConnectionParams
+> {
   private client: Pool | undefined
   constructor(params: BIDataPostgresConnectionParams) {
-    super(params);
+    super(params)
   }
 
   private async connect() {
     if (!this.client) {
       this.client = new Pool({
-        connectionString: this.params.dsn
+        connectionString: this.params.dsn,
       })
     }
   }
@@ -28,7 +30,7 @@ export default class PostgresConnection extends AbstractConnection<BIDataPostgre
     return {
       count: queryResult.rowCount,
       data: queryResult.rows,
-      columns: this.getColumns(queryResult.rows)
+      columns: this.getColumns(queryResult.rows),
     }
   }
 

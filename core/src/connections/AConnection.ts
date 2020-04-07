@@ -1,9 +1,9 @@
-import { decrypt } from "../crypto"
+import { decrypt } from '../crypto'
 
 export type QueryResult = {
-  count: number,
-  data: any[],
-  columns: string[],
+  count: number
+  data: any[]
+  columns: string[]
 }
 
 export default abstract class AbstractConnection<ConnectionParamsType> {
@@ -12,7 +12,7 @@ export default abstract class AbstractConnection<ConnectionParamsType> {
 
   constructor(params: ConnectionParamsType) {
     this.params = {
-      ...params
+      ...params,
     }
     // @ts-ignore
     this.params.dsn = decrypt(this.params.dsn)

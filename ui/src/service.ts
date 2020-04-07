@@ -1,27 +1,31 @@
-import { Client, Action } from "react-fetching-library";
+import { Client, Action } from 'react-fetching-library'
 
 export const API = process.env.REACT_APP_API_HOST
 
-export const requestHostInterceptor = (client: Client) => async (action: Action) => {
+export const requestHostInterceptor = () => async (
+  action: Action
+) => {
   return {
-      ...action,
-      endpoint: `${API}${action.endpoint}`,
-  };
-};
+    ...action,
+    endpoint: `${API}${action.endpoint}`,
+  }
+}
 
 export const fetchConnectionsAction: Action = {
   method: 'GET',
-  endpoint: '/connections'
+  endpoint: '/connections',
 }
 
-export const fetchConnectivityAction: (connection: any) => Action = ({ _id }) => ({
+export const fetchConnectivityAction: (connection: any) => Action = ({
+  _id,
+}) => ({
   method: 'GET',
-  endpoint: `/ui/connections/${_id}/connectivity`
+  endpoint: `/ui/connections/${_id}/connectivity`,
 })
 
 export const fetchDriversAction: Action = {
   method: 'GET',
-  endpoint: '/ui/connections/drivers'
+  endpoint: '/ui/connections/drivers',
 }
 
 export type ConectionFormData = {
@@ -38,49 +42,66 @@ export type QuestionFormData = {
   visualSettings?: any
 }
 
-export const createConnectionAction: (data: ConectionFormData) => Action = ({ name, driver, dsn }: ConectionFormData) => ({
+export const createConnectionAction: (data: ConectionFormData) => Action = ({
+  name,
+  driver,
+  dsn,
+}: ConectionFormData) => ({
   method: 'POST',
   endpoint: '/connections',
   body: {
     name,
     driver,
     params: {
-      dsn
-    }
-  }
+      dsn,
+    },
+  },
 })
-export const updateConnectionAction: (data: ConectionFormData) => Action = ({ name, driver, dsn, id }: ConectionFormData) => ({
+export const updateConnectionAction: (data: ConectionFormData) => Action = ({
+  name,
+  driver,
+  dsn,
+  id,
+}: ConectionFormData) => ({
   method: 'PUT',
   endpoint: `/connections/${id}`,
   body: {
     name,
     driver,
     params: {
-      dsn
-    }
-  }
+      dsn,
+    },
+  },
 })
 
-export const createQuestionAction: (data: QuestionFormData) => Action = (data: QuestionFormData) => ({
+export const createQuestionAction: (data: QuestionFormData) => Action = (
+  data: QuestionFormData
+) => ({
   method: 'POST',
   endpoint: '/questions',
-  body: data
+  body: data,
 })
 
-export const fetchQuestionAction: (question_id: string) => Action = (question_id: string) => ({
+export const fetchQuestionAction: (questionId: string) => Action = (
+  questionId: string
+) => ({
   method: 'GET',
-  endpoint: `/questions/${question_id}`
+  endpoint: `/questions/${questionId}`,
 })
 
-export const fetchConnectionAction: (connection_id: string) => Action = (connection_id: string) => ({
+export const fetchConnectionAction: (connectionId: string) => Action = (
+  connectionId: string
+) => ({
   method: 'GET',
-  endpoint: `/connections/${connection_id}`
+  endpoint: `/connections/${connectionId}`,
 })
 
-export const updateQuestionAction: (question_id: string) => (data: QuestionFormData) => Action = (question_id) => (data) => ({
+export const updateQuestionAction: (
+  questionId: string
+) => (data: QuestionFormData) => Action = (questionId) => (data) => ({
   method: 'PUT',
-  endpoint: `/questions/${question_id}`,
-  body: data
+  endpoint: `/questions/${questionId}`,
+  body: data,
 })
 
 type QuestionExecutionForm = {
@@ -89,42 +110,51 @@ type QuestionExecutionForm = {
   query: string
   visualSettings?: any
 }
-export const createQuestionExecution: (data: QuestionExecutionForm) => Action = (data) => ({
+export const createQuestionExecution: (
+  data: QuestionExecutionForm
+) => Action = (data) => ({
   method: 'POST',
   endpoint: `/executions`,
-  body: data
+  body: data,
 })
 
-export const fetchResultAction: (result_id: string) => Action = (result_id) => ({
+export const fetchResultAction: (resultId: string) => Action = (
+  resultId
+) => ({
   method: 'GET',
-  endpoint: `/results/${result_id}`
+  endpoint: `/results/${resultId}`,
 })
 
-export const fetchExecutionAction: (execution_id: string) => Action = (execution_id) => ({
+export const fetchExecutionAction: (executionId: string) => Action = (
+  executionId
+) => ({
   method: 'GET',
-  endpoint: `/executions/${execution_id}`
+  endpoint: `/executions/${executionId}`,
 })
 
 export const fetchQuestionsAction: Action = {
   method: 'GET',
-  endpoint: '/questions'
+  endpoint: '/questions',
 }
 
-export const fetchLastQuestionExecutionAction: (question_id: string) => Action = (question_id: string) => ({
+export const fetchLastQuestionExecutionAction: (
+  questionId: string
+) => Action = (questionId: string) => ({
   method: 'GET',
-  endpoint: `/questions/${question_id}/executions/last`
+  endpoint: `/questions/${questionId}/executions/last`,
 })
-
 
 type DashboardForm = {
   name: string
   updateFrequency?: number
   questions?: string[]
 }
-export const createDashboardAction: (data: DashboardForm) => Action = (data) => ({
+export const createDashboardAction: (data: DashboardForm) => Action = (
+  data
+) => ({
   method: 'POST',
   endpoint: '/dashboards',
-  body: data
+  body: data,
 })
 
 export const fetchDashboardsAction: Action = {

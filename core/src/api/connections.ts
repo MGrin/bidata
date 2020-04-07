@@ -17,7 +17,9 @@ export type BIDataPostgresConnectionParams = {
   dsn: string
 }
 
-export type BIDataConnectionParams = BIDataMongoConnectionParams | BIDataPostgresConnectionParams
+export type BIDataConnectionParams =
+  | BIDataMongoConnectionParams
+  | BIDataPostgresConnectionParams
 export type BIDataConnection = {
   _id: ObjectId
   name: string
@@ -57,7 +59,7 @@ const validateConnectionData = (connection: BIDataConnection) => {
 }
 
 const handleListConnections = async (req: Request, res: Response) => {
-  const core = await ConnectionsFactory.get() as MongoConnection
+  const core = (await ConnectionsFactory.get()) as MongoConnection
   const connections = await core.client.collection('Connections').find()
   const connectionsAsArr = await connections.toArray()
   return res.send(connectionsAsArr)
@@ -65,8 +67,10 @@ const handleListConnections = async (req: Request, res: Response) => {
 
 const handleGetConnection = async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id)
-  const core = await ConnectionsFactory.get() as MongoConnection
-  const connection = await core.client.collection('Connections').findOne({ _id: id })
+  const core = (await ConnectionsFactory.get()) as MongoConnection
+  const connection = await core.client
+    .collection('Connections')
+    .findOne({ _id: id })
 
   return res.send(connection)
 }
@@ -90,7 +94,10 @@ const handleCreateConnection = async (req: Request, res: Response) => {
     return res.status(apiError.status).send(apiError)
   }
   if (body.metadata.password) {
-    body.metadata.password = body.metadata.password.split().map(() => '*').join()
+    body.metadata.password = body.metadata.password
+      .split()
+      .map(() => '*')
+      .join()
   }
 
   try {
@@ -108,13 +115,20 @@ const handleCreateConnection = async (req: Request, res: Response) => {
   }
 
   const core = ConnectionsFactory.get() as MongoConnection
-  const existingConfig = await core.client.collection('Connections').findOne({ name: body.name })
+  const existingConfig = await core.client
+    .collection('Connections')
+    .findOne({ name: body.name })
   if (existingConfig) {
-    const apiError = new APIError(`Connection called "${body.name}" already exists`, 400)
+    const apiError = new APIError(
+      `Connection called "${body.name}" already exists`,
+      400
+    )
     return res.status(apiError.status).send(apiError)
   }
 
-  const connectionDocument = await core.client.collection('Connections').insertOne(body)
+  const connectionDocument = await core.client
+    .collection('Connections')
+    .insertOne(body)
   return res.send({
     _id: connectionDocument.insertedId,
     ...body,

@@ -1,22 +1,27 @@
 import * as React from 'react'
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core'
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from '@material-ui/core'
 import Value from '../Value'
 import { ResultProps } from '.'
 
 export type TableResultsProps = {
-  page: number,
-  rowsPerPage: number,
+  page: number
+  rowsPerPage: number
 }
 
 type Props = TableResultsProps & ResultProps
 
-export default React.memo(({
-  data,
-  settings,
-  page,
-  rowsPerPage,
-}: Props) => (
-  <TableContainer className="scrollable" style={{ height: 'calc(100% - 50px)' }}>
+export default React.memo(({ data, settings, page, rowsPerPage }: Props) => (
+  <TableContainer
+    className="scrollable"
+    style={{ height: 'calc(100% - 50px)' }}
+  >
     <Table stickyHeader>
       {settings.type === 'columns' && (
         <TableHead>
@@ -35,7 +40,10 @@ export default React.memo(({
               {settings.type === 'columns' && settings.columns && (
                 <>
                   {settings.columns.map((column: string) => (
-                    <TableCell key={`row_${idx}_column_${column}`} style={{ minWidth: 200 }}>
+                    <TableCell
+                      key={`row_${idx}_column_${column}`}
+                      style={{ minWidth: 200 }}
+                    >
                       <Value>{row[column]}</Value>
                     </TableCell>
                   ))}
@@ -43,12 +51,13 @@ export default React.memo(({
               )}
               {settings.type === 'documents' && (
                 <TableCell>
-                  <Value collapsed={1} named>{row}</Value>
+                  <Value collapsed={1} named>
+                    {row}
+                  </Value>
                 </TableCell>
               )}
             </TableRow>
-          )
-        )}
+          ))}
       </TableBody>
     </Table>
   </TableContainer>

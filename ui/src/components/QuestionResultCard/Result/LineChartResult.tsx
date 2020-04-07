@@ -1,31 +1,48 @@
 import * as React from 'react'
 import { Box } from '@material-ui/core'
 import { AutoSizer } from 'react-virtualized'
-import { LineChart, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, Area } from 'recharts'
+import {
+  LineChart,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Line,
+  Area,
+} from 'recharts'
 import { ResultProps } from '.'
 
-export default ({
-  data,
-  settings
-}: ResultProps) => {
+export default ({ data, settings }: ResultProps) => {
   const ChartComponent = settings['chart.line'].asArea ? AreaChart : LineChart
   const CurveComponent = settings['chart.line'].asArea ? Area : Line
-  
+
   return (
     <Box pr={3} width="calc(100% - 16)" height="calc(100% - 50px)">
       <AutoSizer>
         {({ width, height }) => (
-          <ChartComponent
-            width={width}
-            height={height}
-            data={data}
-          >
+          <ChartComponent width={width} height={height} data={data}>
             {settings['chart.line'].asArea && (
               <defs>
                 {settings['chart.line'].yAxis.map((yAxis: string) => (
-                  <linearGradient id={`color_${yAxis}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={settings['chart.line'].colors[yAxis]} stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor={settings['chart.line'].colors[yAxis]} stopOpacity={0}/>
+                  <linearGradient
+                    id={`color_${yAxis}`}
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor={settings['chart.line'].colors[yAxis]}
+                      stopOpacity={0.8}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor={settings['chart.line'].colors[yAxis]}
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 ))}
               </defs>

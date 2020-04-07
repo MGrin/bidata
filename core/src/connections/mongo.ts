@@ -1,15 +1,17 @@
 import * as mongo from 'mongodb'
 import vm from 'vm'
 import AbstractConnection, { QueryResult } from './AConnection'
-import { BIDataMongoConnectionParams } from '../api/connections';
+import { BIDataMongoConnectionParams } from '../api/connections'
 
-export default class MongoConnection extends AbstractConnection<BIDataMongoConnectionParams> {
+export default class MongoConnection extends AbstractConnection<
+  BIDataMongoConnectionParams
+> {
   private _client: mongo.MongoClient | null = null
   // @ts-ignore
   public client: mongo.Db
 
   constructor(params: BIDataMongoConnectionParams) {
-    super(params);
+    super(params)
   }
 
   private async connect() {
@@ -18,7 +20,7 @@ export default class MongoConnection extends AbstractConnection<BIDataMongoConne
         useNewUrlParser: true,
         useUnifiedTopology: true,
         numberOfRetries: 1,
-        connectTimeoutMS: 5000.
+        connectTimeoutMS: 5000,
       })
 
       this.client = this._client.db()
@@ -34,13 +36,17 @@ export default class MongoConnection extends AbstractConnection<BIDataMongoConne
     }
 
     const parsingContext = vm.createContext(scope)
-    const fn = vm.compileFunction(`
+    const fn = vm.compileFunction(
+      `
       const run = async () => {
         ${query}
       }
 
       return run()
-    `, [], { parsingContext })
+    `,
+      [],
+      { parsingContext }
+    )
     let fnResult = await fn()
 
     const result = {} as any

@@ -12,18 +12,18 @@ export enum BIDataExecutionState {
   'RUNNING' = 'RUNNING',
   'CANCELED' = 'CANCELED',
   'DONE' = 'DONE',
-  'ERROR' = 'ERROR'
+  'ERROR' = 'ERROR',
 }
 
 export type BIDataExecution = {
-  question_id: string,
-  connection_id: string,
-  query: string,
-  state?: BIDataExecutionState,
+  question_id: string
+  connection_id: string
+  query: string
+  state?: BIDataExecutionState
   results?: ObjectId
-  error?: string,
-  created?: Date,
-  updatd?: Date,
+  error?: string
+  created?: Date
+  updatd?: Date
 }
 
 const ExecutionsAPI = Router()
@@ -32,7 +32,9 @@ const handleGetExecution = async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id)
   const core = ConnectionsFactory.get() as MongoConnection
 
-  const execution = await core.client.collection('Executions').findOne({ _id: id })
+  const execution = await core.client
+    .collection('Executions')
+    .findOne({ _id: id })
   if (!execution) {
     const apiError = new APIError('No execution found', 400)
     return res.status(apiError.status).send(apiError)
@@ -54,30 +56,40 @@ const handleCreateExecution = async (req: Request, res: Response) => {
     created: now,
     updated: now,
   })
-  const execution = await core.client.collection('Executions').findOne({ _id: executionInsert.insertedId }) as BIDataExecution
+  const execution = (await core.client
+    .collection('Executions')
+    .findOne({ _id: executionInsert.insertedId })) as BIDataExecution
 
   if (!execution) {
     const apiError = new APIError('Failed to execute the question', 500)
-    await core.client.collection('Executions').updateOne({ _id: executionInsert.insertedId }, {
-      $set: {
-        state: BIDataExecutionState.ERROR,
-        error: apiError.message,
+    await core.client.collection('Executions').updateOne(
+      { _id: executionInsert.insertedId },
+      {
+        $set: {
+          state: BIDataExecutionState.ERROR,
+          error: apiError.message,
+        },
       }
-    })
+    )
 
     return res.status(apiError.status).send(apiError)
   }
 
-  const question = await core.client.collection('Questions').findOne({ _id: new ObjectId(execution.question_id) }) as BIDataQuestion
+  const question = (await core.client
+    .collection('Questions')
+    .findOne({ _id: new ObjectId(execution.question_id) })) as BIDataQuestion
   if (!question) {
     const apiError = new APIError('Question not found', 404)
     const update = {
       state: BIDataExecutionState.ERROR,
       error: apiError.message,
     }
-    await core.client.collection('Executions').updateOne({ _id: executionInsert.insertedId }, {
-      $set: update
-    })
+    await core.client.collection('Executions').updateOne(
+      { _id: executionInsert.insertedId },
+      {
+        $set: update,
+      }
+    )
 
     return res.send({
       ...execution,
@@ -85,7 +97,9 @@ const handleCreateExecution = async (req: Request, res: Response) => {
     })
   }
 
-  const connection = await core.client.collection('Connections').findOne({ _id: new ObjectId(question.connection_id) }) as BIDataConnection
+  const connection = (await core.client
+    .collection('Connections')
+    .findOne({ _id: new ObjectId(question.connection_id) })) as BIDataConnection
 
   if (!connection) {
     const apiError = new APIError('Connection not found', 404)
@@ -93,9 +107,12 @@ const handleCreateExecution = async (req: Request, res: Response) => {
       state: BIDataExecutionState.ERROR,
       error: apiError.message,
     }
-    await core.client.collection('Executions').updateOne({ _id: executionInsert.insertedId }, {
-      $set: update
-    })
+    await core.client.collection('Executions').updateOne(
+      { _id: executionInsert.insertedId },
+      {
+        $set: update,
+      }
+    )
 
     return res.send({
       ...execution,
@@ -106,23 +123,24 @@ const handleCreateExecution = async (req: Request, res: Response) => {
   res.send(execution)
   const executor = getExecutor()
   const setState = async (update: Partial<BIDataExecution>) => {
-    await core.client
-      .collection('Executions')
-      .updateOne({ _id: executionInsert.insertedId }, {
+    await core.client.collection('Executions').updateOne(
+      { _id: executionInsert.insertedId },
+      {
         $set: {
           ...update,
           updated: new Date(),
-        }
-      })
+        },
+      }
+    )
   }
 
   try {
     await executor.run(question, connection, setState)
   } catch (e) {
-    await setState(({
+    await setState({
       state: BIDataExecutionState.ERROR,
-      error: e.message
-    }))
+      error: e.message,
+    })
   }
 }
 

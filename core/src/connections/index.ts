@@ -1,20 +1,34 @@
-import { BIDataConnection, BIDataConnectionParams, BIDataMongoConnectionParams, BIDataPostgresConnectionParams, SUPPORTED_DRIVERS } from '../api/connections'
+import {
+  BIDataConnection,
+  BIDataConnectionParams,
+  BIDataMongoConnectionParams,
+  BIDataPostgresConnectionParams,
+  SUPPORTED_DRIVERS,
+} from '../api/connections'
 import MongoConnection from './mongo'
 import PostgresConnection from './postgres'
 import AbstractConnection from './AConnection'
 
 export default class ConnectionsFactory {
-  private static connections: { [name: string]: AbstractConnection<BIDataConnectionParams> } = {}
-  constructor() { }
+  private static connections: {
+    [name: string]: AbstractConnection<BIDataConnectionParams>
+  } = {}
+  constructor() {}
 
   public static createConnection(connection: BIDataConnection) {
     switch (connection.driver) {
       case SUPPORTED_DRIVERS.mongodb: {
-        ConnectionsFactory.connections[connection.name] = new MongoConnection(connection.params as BIDataMongoConnectionParams)
+        ConnectionsFactory.connections[connection.name] = new MongoConnection(
+          connection.params as BIDataMongoConnectionParams
+        )
         break
       }
       case SUPPORTED_DRIVERS.postgresql: {
-        ConnectionsFactory.connections[connection.name] = new PostgresConnection(connection.params as BIDataPostgresConnectionParams)
+        ConnectionsFactory.connections[
+          connection.name
+        ] = new PostgresConnection(
+          connection.params as BIDataPostgresConnectionParams
+        )
         break
       }
     }

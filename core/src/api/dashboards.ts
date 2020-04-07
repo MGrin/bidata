@@ -21,7 +21,7 @@ const validateDashboardData = (dashboard: BIDataDashboard) => {
 }
 
 const handleListDashboards = async (req: Request, res: Response) => {
-  const core = await ConnectionsFactory.get() as MongoConnection
+  const core = (await ConnectionsFactory.get()) as MongoConnection
   const dashboards = await core.client.collection('Dashboards').find()
   const dashboardsAsArr = await dashboards.toArray()
   return res.send(dashboardsAsArr)
@@ -29,8 +29,10 @@ const handleListDashboards = async (req: Request, res: Response) => {
 
 const handleGetDashboard = async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id)
-  const core = await ConnectionsFactory.get() as MongoConnection
-  const dashboard = await core.client.collection('Dashboards').findOne({ _id: id })
+  const core = (await ConnectionsFactory.get()) as MongoConnection
+  const dashboard = await core.client
+    .collection('Dashboards')
+    .findOne({ _id: id })
 
   return res.send(dashboard)
 }
@@ -40,7 +42,9 @@ const handleCreateDashboard = async (req: Request, res: Response) => {
     ...req.body,
   } as BIDataDashboard
   if (body.questions) {
-    body.questions = body.questions.map((questionId: ObjectId) => new ObjectId(questionId))
+    body.questions = body.questions.map(
+      (questionId: ObjectId) => new ObjectId(questionId)
+    )
   }
 
   try {
@@ -50,7 +54,9 @@ const handleCreateDashboard = async (req: Request, res: Response) => {
   }
 
   const core = ConnectionsFactory.get() as MongoConnection
-  const dashboardDocument = await core.client.collection('Dashboards').insertOne(body)
+  const dashboardDocument = await core.client
+    .collection('Dashboards')
+    .insertOne(body)
 
   return res.send({
     _id: dashboardDocument.insertedId,

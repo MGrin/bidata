@@ -1,17 +1,17 @@
-import { BIDataExecution, BIDataExecutionState } from "../api/executions";
-import { BIDataQuestion } from "../api/questions";
-import { BIDataConnection } from "../api/connections";
-import ConnectionsFactory from "../connections";
-import MongoConnection from "../connections/mongo";
+import { BIDataExecution, BIDataExecutionState } from '../api/executions'
+import { BIDataQuestion } from '../api/questions'
+import { BIDataConnection } from '../api/connections'
+import ConnectionsFactory from '../connections'
+import MongoConnection from '../connections/mongo'
 
 export class Executor {
-  constructor() { }
+  constructor() {}
 
   public async run(
     question: BIDataQuestion,
     connection: BIDataConnection,
-    setState: (update: Partial<BIDataExecution>,
-    ) => void) {
+    setState: (update: Partial<BIDataExecution>) => void
+  ) {
     const conn = ConnectionsFactory.get(connection.name)
 
     setState({
@@ -21,7 +21,9 @@ export class Executor {
     try {
       const result = await conn.runQuery(question.query || '')
       const core = ConnectionsFactory.get() as MongoConnection
-      const resultInsert = await core.client.collection('Results').insertOne(result)
+      const resultInsert = await core.client
+        .collection('Results')
+        .insertOne(result)
 
       setState({
         state: BIDataExecutionState.DONE,

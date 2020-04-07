@@ -1,11 +1,28 @@
 import * as React from 'react'
-import { Box, Dialog, DialogProps, DialogTitle, DialogContent, DialogContentText, FormControl, InputLabel, Select, MenuItem, Typography, LinearProgress, DialogActions, Button, TextField } from '@material-ui/core'
-import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
+import {
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+  LinearProgress,
+  DialogActions,
+  Button,
+  TextField,
+} from '@material-ui/core'
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer'
 import { useConnections } from '../../hooks'
 import { createQuestionAction } from '../../service'
 import { useMutation } from 'react-fetching-library'
 
-type Props = DialogProps & {
+type Props = {
+  open: boolean
+  onClose: () => void
   onSuccess: (question: any) => void
 }
 
@@ -21,13 +38,16 @@ const validate = (connection: string, name: string) => {
   return true
 }
 
-export default ({
-  open,
-  onClose,
-  onSuccess,
-}: Props) => {
-  const { loading: loadingConnections, error: errorConnections, connections, query: fetchConnections } = useConnections()
-  const { loading: loadingSubmission, mutate: createQuestion } = useMutation(createQuestionAction)
+export default ({ open, onClose, onSuccess }: Props) => {
+  const {
+    loading: loadingConnections,
+    error: errorConnections,
+    connections,
+    query: fetchConnections,
+  } = useConnections()
+  const { loading: loadingSubmission, mutate: createQuestion } = useMutation(
+    createQuestionAction
+  )
   const loading = loadingConnections || loadingSubmission
 
   const [connection, setConnection] = React.useState('')
@@ -51,10 +71,13 @@ export default ({
       name,
       connection_id: connection,
       visualSettings: {
-        type: connectionDriver === 'mongodb' ? 'documents' : 'columns'
-      }
+        type: connectionDriver === 'mongodb' ? 'documents' : 'columns',
+      },
     }
-    const { payload: mutationPayload, error: mutationError} = await createQuestion(questionData)
+    const {
+      payload: mutationPayload,
+      error: mutationError,
+    } = await createQuestion(questionData)
     if (mutationError) {
       return setError(mutationPayload)
     }
@@ -86,12 +109,19 @@ export default ({
             error={errorConnections}
             onChange={({ target: { value } }) => {
               setConnection(value as string)
-              setConnectionDriver((connections as any[]).find(connection => connection._id === value).driver)
+              setConnectionDriver(
+                (connections as any[]).find(
+                  (c) => c._id === value
+                ).driver
+              )
             }}
           >
-            {connections && connections.map((connection: any) => (
-              <MenuItem key={connection._id} value={connection._id}>{connection.name}</MenuItem>
-            ))}
+            {connections &&
+              connections.map((c: any) => (
+                <MenuItem key={c._id} value={c._id}>
+                  {c.name}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
         <FormControl fullWidth disabled={loading}>
@@ -105,7 +135,9 @@ export default ({
           />
         </FormControl>
         {error && (
-          <Typography color="error" variant="caption">Error: {error && error.message}</Typography>
+          <Typography color="error" variant="caption">
+            Error: {error && error.message}
+          </Typography>
         )}
         {loading && <LinearProgress />}
       </DialogContent>
@@ -114,7 +146,7 @@ export default ({
           disabled={loading}
           onClick={(e) => {
             if (onClose) {
-              onClose(e, 'escapeKeyDown')
+              onClose()
             }
           }}
           color="secondary"

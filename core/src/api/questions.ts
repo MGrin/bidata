@@ -27,7 +27,7 @@ const validateQuestionData = (body: BIDataQuestion) => {
 }
 
 const handleListQuestions = async (req: Request, res: Response) => {
-  const core = await ConnectionsFactory.get() as MongoConnection
+  const core = (await ConnectionsFactory.get()) as MongoConnection
   const questions = await core.client.collection('Questions').find()
   const questionsAsArr = await questions.toArray()
   return res.send(questionsAsArr)
@@ -35,8 +35,10 @@ const handleListQuestions = async (req: Request, res: Response) => {
 
 const handleGetQuestion = async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id)
-  const core = await ConnectionsFactory.get() as MongoConnection
-  const question = await core.client.collection('Questions').findOne({ _id: id })
+  const core = (await ConnectionsFactory.get()) as MongoConnection
+  const question = await core.client
+    .collection('Questions')
+    .findOne({ _id: id })
 
   return res.send(question)
 }
@@ -52,7 +54,9 @@ const handleCreateQuestion = async (req: Request, res: Response) => {
   const core = ConnectionsFactory.get() as MongoConnection
 
   try {
-    const connection = await core.client.collection('Connections').findOne({ _id: new ObjectId(body.connection_id) })
+    const connection = await core.client
+      .collection('Connections')
+      .findOne({ _id: new ObjectId(body.connection_id) })
     if (!connection) {
       const apiError = new APIError('No connection found', 400)
       return res.status(apiError.status).send(apiError)
@@ -68,7 +72,7 @@ const handleCreateQuestion = async (req: Request, res: Response) => {
   })
   return res.send({
     _id: questionDocument.insertedId,
-    ...body
+    ...body,
   })
 }
 
@@ -102,9 +106,14 @@ const handleGetLastExecution = async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id)
   const core = ConnectionsFactory.get() as MongoConnection
 
-  const execution = await core.client.collection('Executions').find({
-    question_id: id,
-  }).sort({ updated: -1 }).limit(1).toArray()
+  const execution = await core.client
+    .collection('Executions')
+    .find({
+      question_id: id,
+    })
+    .sort({ updated: -1 })
+    .limit(1)
+    .toArray()
 
   if (execution && execution.length > 0) {
     return res.send(execution[0])

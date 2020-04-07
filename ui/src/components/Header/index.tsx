@@ -1,24 +1,40 @@
 import * as React from 'react'
-import { Box, IconButton, Breadcrumbs, Link, AppBar, Toolbar, Button, Grid, Menu, MenuItem, ListItemText, ListItemIcon, Drawer, List, ListItem, Divider } from '@material-ui/core'
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import {
+  Box,
+  IconButton,
+  Breadcrumbs,
+  Link,
+  AppBar,
+  Toolbar,
+  Button,
+  Grid,
+  Menu,
+  MenuItem,
+  ListItemText,
+  ListItemIcon,
+  Drawer,
+  List,
+  ListItem,
+  Divider,
+} from '@material-ui/core'
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import { useLocation, useHistory } from 'react-router-dom'
 import { Skeleton } from '@material-ui/lab'
 import AddIcon from '@material-ui/icons/Add'
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
-import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
-import MenuIcon from '@material-ui/icons/Menu';
-import SettingsIcon from '@material-ui/icons/Settings';
+import DashboardIcon from '@material-ui/icons/Dashboard'
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer'
+import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent'
+import MenuIcon from '@material-ui/icons/Menu'
+import SettingsIcon from '@material-ui/icons/Settings'
 import NewQuestioForm from './NewQuestionForm'
 import NewDashboardForm from './NewDashboardForm'
 
 const Title = () => {
   const location = useLocation<{ title?: string }>()
-  const path = location
-    .pathname
+  const path = location.pathname
     .split('/')
     .filter((p: string, idx: number, self: string[]) => self.indexOf(p) === idx)
-  let accPath = "/"
+  let accPath = '/'
 
   return (
     <Breadcrumbs color="primary.contrastText">
@@ -26,21 +42,17 @@ const Title = () => {
         accPath += page ? `${page}/` : ''
 
         let title = page || 'BIData'
-        if (idx === path.length -1) {
-          title = (location.state && location.state.title)
-            ? location.state.title
-            : title
+        if (idx === path.length - 1) {
+          title =
+            location.state && location.state.title
+              ? location.state.title
+              : title
         }
-        
+
         return (
-          <Link
-            key={accPath}
-            color="inherit"
-            href={accPath}
-            variant="h6"
-          >
+          <Link key={accPath} color="inherit" href={accPath} variant="h6">
             {title}
-          </Link>                  
+          </Link>
         )
       })}
     </Breadcrumbs>
@@ -58,23 +70,15 @@ const useStyles = makeStyles((theme: Theme) =>
     nested: {
       paddingLeft: theme.spacing(4),
     },
-  }),
-);
+  })
+)
 
-const DrawerMenu = ({
-  open,
-  navigate,
-  onClose,
-}: DrawerMenuProps) => {
+const DrawerMenu = ({ open, navigate, onClose }: DrawerMenuProps) => {
   const location = useLocation()
   const classes = useStyles()
 
   return (
-    <Drawer
-      anchor="left"
-      open={open}
-      onClose={onClose}
-    >
+    <Drawer anchor="left" open={open} onClose={onClose}>
       <Box width={300}>
         <Box m={3}>
           <Skeleton variant="circle" width={80} height={80} />
@@ -84,7 +88,8 @@ const DrawerMenu = ({
           <ListItem
             button
             selected={location.pathname === '/dashboards'}
-            onClick={() => navigate('/dashboards')}>
+            onClick={() => navigate('/dashboards')}
+          >
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
@@ -93,7 +98,8 @@ const DrawerMenu = ({
           <ListItem
             button
             selected={location.pathname === '/questions'}
-            onClick={() => navigate('/questions')}>
+            onClick={() => navigate('/questions')}
+          >
             <ListItemIcon>
               <QuestionAnswerIcon />
             </ListItemIcon>
@@ -105,7 +111,8 @@ const DrawerMenu = ({
           <ListItem
             button
             selected={location.pathname === '/admin'}
-            onClick={() => navigate('/admin')}>
+            onClick={() => navigate('/admin')}
+          >
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>
@@ -115,7 +122,8 @@ const DrawerMenu = ({
             <ListItem
               button
               selected={location.pathname === '/admin/connections'}
-              onClick={() => navigate('/admin/connections')}>
+              onClick={() => navigate('/admin/connections')}
+            >
               <ListItemIcon>
                 <SettingsInputComponentIcon />
               </ListItemIcon>
@@ -134,7 +142,7 @@ type HeaderContentProps = {
 }
 const HeaderContent = ({
   openMenu,
-  openAddNewSelector
+  openAddNewSelector,
 }: HeaderContentProps) => (
   <Toolbar style={{ paddingLeft: 0 }}>
     <Grid
@@ -149,18 +157,12 @@ const HeaderContent = ({
         flexDirection="row"
         alignItems="center"
       >
-        <IconButton
-          style={{ color: 'white' }}
-          onClick={openMenu}
-        >
+        <IconButton style={{ color: 'white' }} onClick={openMenu}>
           <MenuIcon />
         </IconButton>
         <Title />
       </Box>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center">
+      <Box display="flex" flexDirection="row" alignItems="center">
         <Button
           variant="outlined"
           color="inherit"
@@ -189,12 +191,7 @@ const AddNewSelector = ({
   openNewQuestion,
   onClose,
 }: AddNewSelectorProps) => (
-  <Menu
-    open={open}
-    keepMounted
-    anchorEl={anchorEl}
-    onClose={onClose}
-  >
+  <Menu open={open} keepMounted anchorEl={anchorEl} onClose={onClose}>
     <MenuItem onClick={openNewDashboard}>
       <ListItemIcon>
         <DashboardIcon />
@@ -212,12 +209,14 @@ const AddNewSelector = ({
 
 export default React.memo(() => {
   const history = useHistory()
-  
-  const [addAnchorEl, setAddAnchorEl] = React.useState<HTMLElement | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  
+
+  const [addAnchorEl, setAddAnchorEl] = React.useState<HTMLElement | null>(null)
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+
   const [isNewQuestionFormOpen, setNewQuestionFormOpen] = React.useState(false)
-  const [isNewDashboardFormOpen, setNewDashboardFormOpen] = React.useState(false)
+  const [isNewDashboardFormOpen, setNewDashboardFormOpen] = React.useState(
+    false
+  )
 
   return (
     <AppBar position="static">

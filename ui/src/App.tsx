@@ -1,6 +1,6 @@
-import * as React from 'react';
+import * as React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import { createClient, ClientContextProvider } from 'react-fetching-library';
+import { createClient, ClientContextProvider } from 'react-fetching-library'
 import { requestHostInterceptor } from './service'
 import {
   Home,
@@ -11,13 +11,11 @@ import {
   Dashboards,
   Dashboard,
 } from './pages'
-import {
-  Header,
-} from './components'
+import { Header } from './components'
 
 const client = createClient({
-  requestInterceptors: [requestHostInterceptor]
-});
+  requestInterceptors: [requestHostInterceptor],
+})
 
 export default () => (
   <ClientContextProvider client={client}>

@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Request, Response } from 'express'
 
 export class APIError {
   public message: string
@@ -9,9 +9,10 @@ export class APIError {
   }
 }
 
-export const withCatch = (handler: (req: Request, res: Response) => Promise<any>) =>
-  (req: Request, res: Response) =>
-    handler(req, res).catch((e) => {
-      const apiError = new APIError(e.message, e.status)
-      return res.status(apiError.status).send(apiError)
-    })
+export const withCatch = (
+  handler: (req: Request, res: Response) => Promise<any>
+) => (req: Request, res: Response) =>
+  handler(req, res).catch(e => {
+    const apiError = new APIError(e.message, e.status)
+    return res.status(apiError.status).send(apiError)
+  })

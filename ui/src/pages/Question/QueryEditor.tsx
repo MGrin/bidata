@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Box, Paper } from '@material-ui/core'
-import MonacoEditor from 'react-monaco-editor';
+import MonacoEditor from 'react-monaco-editor'
 import { AutoSizer } from 'react-virtualized'
 
 type Props = {
@@ -20,7 +20,7 @@ const getLanguageFromDriver = (driver: string) => {
 export default React.memo(({ query, driver, onChange }: Props) => {
   const language = React.useMemo(() => getLanguageFromDriver(driver), [driver])
   return (
-    <Box p={1} height='100%'>
+    <Box p={1} height="100%">
       <Paper style={{ height: '100%' }}>
         <AutoSizer>
           {({ width, height }) => (
@@ -31,7 +31,7 @@ export default React.memo(({ query, driver, onChange }: Props) => {
               theme="vs-light"
               value={query || ''}
               options={{
-                selectOnLineNumbers: true
+                selectOnLineNumbers: true,
               }}
               onChange={onChange}
               editorDidMount={() => {}}

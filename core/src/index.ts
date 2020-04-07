@@ -27,7 +27,7 @@ const main = async () => {
     params: {
       dsn: encrypt(MONGO_URL),
     },
-    metadata: {}
+    metadata: {},
   }) as MongoConnection
 
   await coreConnection.checkConectivity()
@@ -45,7 +45,7 @@ const main = async () => {
 
   app.use('/ui', UIAPI)
   app.listen(API_PORT, () =>
-    console.log(`BIData Core service started at port ${API_PORT}`)
+    console.warn(`BIData Core service started at port ${API_PORT}`)
   )
 }
 
