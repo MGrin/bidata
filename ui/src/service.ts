@@ -158,7 +158,9 @@ export const fetchDashboardsAction: Action = {
   endpoint: '/dashboards',
 }
 
-export const fetchDashboardAction: (dashboardId: string) => Action = (dashboardId) => ({
+export const fetchDashboardAction: (dashboardId: string) => Action = (
+  dashboardId
+) => ({
   method: 'GET',
-  endpoint: `/dashboards/${dashboardId}`
+  endpoint: `/dashboards/${dashboardId}`,
 })

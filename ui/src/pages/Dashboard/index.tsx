@@ -10,7 +10,15 @@ type TileProps = {
 
 const Tile = ({ questionId }: TileProps) => {
   const history = useHistory()
-  const { loading, error, question, execution, waiting, errorWaiting, run } = useQuestion(questionId)
+  const {
+    loading,
+    error,
+    question,
+    execution,
+    waiting,
+    errorWaiting,
+    run,
+  } = useQuestion(questionId)
 
   if (!question) return null
 
@@ -71,7 +79,6 @@ export default () => {
             ))}
           </Grid>
         </Box>
-
       )}
     </>
   )

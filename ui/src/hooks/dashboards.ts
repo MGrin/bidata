@@ -16,7 +16,9 @@ export const useDashboards = () => {
 }
 
 export const useDashboard = (dashboardId: string) => {
-  const { loading, error, payload: dashboard } = useQuery(fetchDashboardAction(dashboardId))
+  const { loading, error, payload: dashboard } = useQuery(
+    fetchDashboardAction(dashboardId)
+  )
 
   return {
     loading,
