@@ -31,7 +31,6 @@ const main = async () => {
   app.use(cors())
   app.use(express.json())
 
-
   app.listen(PORT, () =>
     console.warn(`BIData Auth service started at port ${PORT}`)
   )

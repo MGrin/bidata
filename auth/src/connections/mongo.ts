@@ -2,9 +2,7 @@ import * as mongo from 'mongodb'
 import vm from 'vm'
 import AbstractConnection, { QueryResult } from './AConnection'
 
-export default class MongoConnection extends AbstractConnection<
-  any
-> {
+export default class MongoConnection extends AbstractConnection<any> {
   private _client: mongo.MongoClient | null = null
   // @ts-ignore
   public client: mongo.Db
