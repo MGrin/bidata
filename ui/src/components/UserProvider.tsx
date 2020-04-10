@@ -2,6 +2,7 @@ import * as React from 'react'
 import { userContext, User } from '../hooks'
 import { useClient, useMutation } from 'react-fetching-library'
 import { fetchUserForToken, loginWithGoogleAction } from '../service'
+import { NOOP } from '../utils'
 
 declare const gapi: any
 
@@ -38,15 +39,6 @@ const initGoogleApiEffect = (onResult: (result: boolean) => void) => () => {
   }
 }
 
-const login = (provider: string) => {
-  if (provider === 'google') {
-    const authInstance = gapi.auth2.getAuthInstance()
-    if (authInstance) {
-      authInstance.signIn()
-    }
-  }
-}
-
 export default ({ children }: { children: any }) => {
   const [GAPIInited, setGAPIInited] = React.useState(false)
   const [token, setToken] = React.useState<string | undefined>(localStorage.getItem('token') || undefined)
@@ -77,6 +69,7 @@ export default ({ children }: { children: any }) => {
       }
     }
   }, [GAPIInited])
+
   React.useEffect(() => {
     if (!token) {
       setUser(undefined)
@@ -106,13 +99,32 @@ export default ({ children }: { children: any }) => {
     )
   }
 
+  const login = (provider: string) => {
+    if (provider === 'google') {
+      const authInstance = gapi.auth2.getAuthInstance()
+      if (authInstance) {
+        authInstance.signIn()
+      }
+    }
+  }
+
+  const logout = () => {
+    const authInstance = gapi.auth2.getAuthInstance()
+    if (authInstance) {
+      authInstance.signOut()
+    }
+
+    setToken(undefined)
+  }
+
   return (
     <userContext.Provider
       value={{
         user,
         setToken,
         setUser,
-        login: GAPIInited ? login : undefined,
+        login: GAPIInited ? login : NOOP,
+        logout: GAPIInited ? logout : NOOP
       }}>
       {children}
     </userContext.Provider>
