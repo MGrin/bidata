@@ -19,11 +19,13 @@ key.importKey(
 
 export const encrypt = (data: string) => key.encrypt(data, 'base64')
 export const decrypt = (data: string) => key.decrypt(data).toString('utf-8')
-export const generateSalt = () => crypto.randomBytes(128)
-  .toString('hex')
-  .slice(0, length);
+export const generateSalt = () =>
+  crypto
+    .randomBytes(128)
+    .toString('hex')
+    .slice(0, length)
 export const hash = (str: string, salt: string) => {
-  const hash = crypto.createHmac('sha512', salt);
+  const hash = crypto.createHmac('sha512', salt)
   hash.update(str)
   return hash.digest('hex')
 }
