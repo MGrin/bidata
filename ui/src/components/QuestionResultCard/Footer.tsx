@@ -7,10 +7,10 @@ import {
   Tooltip,
 } from '@material-ui/core'
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab'
-import { useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@material-ui/core/styles'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import ListIcon from '@material-ui/icons/List'
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import TimelineIcon from '@material-ui/icons/Timeline'
 import PieChartIcon from '@material-ui/icons/PieChart'
 import BarChartIcon from '@material-ui/icons/BarChart'
@@ -71,7 +71,9 @@ export default ({
         {isXS && execution && (
           <Tooltip
             disableFocusListener
-            title={<ReactTimeAgo date={parseISO(execution.created)} locale="en" />}
+            title={
+              <ReactTimeAgo date={parseISO(execution.created)} locale="en" />
+            }
             placement="top"
             arrow
           >
@@ -102,28 +104,51 @@ export default ({
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="chart.line" size={isXS ? 'small' : undefined}>
-              <Tooltip title="Line chart" placement="top" arrow disableFocusListener>
+              <Tooltip
+                title="Line chart"
+                placement="top"
+                arrow
+                disableFocusListener
+              >
                 <TimelineIcon
                   color={settings.type === 'chart.line' ? 'primary' : undefined}
                 />
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="chart.pie" size={isXS ? 'small' : undefined}>
-              <Tooltip title="Pie chart" placement="top" arrow disableFocusListener>
+              <Tooltip
+                title="Pie chart"
+                placement="top"
+                arrow
+                disableFocusListener
+              >
                 <PieChartIcon
                   color={settings.type === 'chart.pie' ? 'primary' : undefined}
                 />
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="chart.bar" size={isXS ? 'small' : undefined}>
-              <Tooltip title="Bar chart" placement="top" arrow disableFocusListener>
+              <Tooltip
+                title="Bar chart"
+                placement="top"
+                arrow
+                disableFocusListener
+              >
                 <BarChartIcon
                   color={settings.type === 'chart.bar' ? 'primary' : undefined}
                 />
               </Tooltip>
             </ToggleButton>
-            <ToggleButton value="chart.bubble" size={isXS ? 'small' : undefined}>
-              <Tooltip title="Bubble chart" placement="top" arrow disableFocusListener>
+            <ToggleButton
+              value="chart.bubble"
+              size={isXS ? 'small' : undefined}
+            >
+              <Tooltip
+                title="Bubble chart"
+                placement="top"
+                arrow
+                disableFocusListener
+              >
                 <BubbleChartIcon
                   color={
                     settings.type === 'chart.bubble' ? 'primary' : undefined
@@ -145,8 +170,8 @@ export default ({
       {settings.type === 'documents' || settings.type === 'columns' ? (
         children
       ) : (
-          <Box />
-        )}
+        <Box />
+      )}
     </Box>
   )
 }

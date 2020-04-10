@@ -1,8 +1,45 @@
-import { Router, Response, Request } from 'express'
+import { Router, Response } from 'express'
 import ConnectionsFactory from '../connections'
 import MongoConnection from '../connections/mongo'
 import { ObjectId } from 'mongodb'
 import { APIError, withCatch } from './utils'
+import { AuthRequest, requiresAuth } from '../middlewares'
+import { SUPPORTED_DRIVERS } from './connections'
+
+const INITIAL_QUERY = {
+  [SUPPORTED_DRIVERS.mongodb]: (user: any) => `/**
+ * Hi ${user.firstName || ''}! Happy to see you here.
+ * This is the Mongo DB shell. Basically it's a fully functional JavaScript VM,
+ * from where you can access to the mongodb client.
+ * 
+ * Here is an example:
+ * 
+ * const results = await db.collection('YOUR_COLLECTION_NAME').find().toArray
+ * return results
+ * 
+ * The code above will retuan all documents from collection YOUR_COLLECTION_NAME
+ * 
+ * Note that you can fully use the power of JavaScript in here!
+ * 
+ * const data = []
+ * for (let i = 0; i < 1000; i++) {
+ *   data.push({ index: i, value: Math.random() * i })
+ * }
+ * 
+ * return data
+ * 
+ * Have fun!
+ */`,
+  [SUPPORTED_DRIVERS.postgresql]: (user: any) => `-- Hi ${user.firstName ||
+    ''}! Happy to see you here.
+-- This is the PostgresQL shell.
+-- You can write raw SQL here, like this:
+
+SELECT now()
+
+-- Please, never end you query with ";" symbol! It will throw an error :)
+-- Have fun!`,
+} as any
 
 export type BIDataQuestion = {
   name: string
@@ -26,24 +63,41 @@ const validateQuestionData = (body: BIDataQuestion) => {
   }
 }
 
-const handleListQuestions = async (req: Request, res: Response) => {
+const handleListQuestions = async (req: AuthRequest, res: Response) => {
   const core = (await ConnectionsFactory.get()) as MongoConnection
-  const questions = await core.client.collection('Questions').find()
+  const questions = await core.client.collection('Questions').find({
+    $or: [
+      {
+        owner_id: req.user._id,
+        private: true,
+      },
+      {
+        private: false,
+      },
+    ],
+  })
   const questionsAsArr = await questions.toArray()
   return res.send(questionsAsArr)
 }
 
-const handleGetQuestion = async (req: Request, res: Response) => {
+const handleGetQuestion = async (req: AuthRequest, res: Response) => {
   const id = new ObjectId(req.params.id)
   const core = (await ConnectionsFactory.get()) as MongoConnection
   const question = await core.client
     .collection('Questions')
     .findOne({ _id: id })
 
+  if (!question) {
+    throw new APIError('Question not found', 404)
+  }
+
+  if (question.private && !question.owner_id.equals(req.user._id)) {
+    throw new APIError('You do not have access to this question', 401)
+  }
   return res.send(question)
 }
 
-const handleCreateQuestion = async (req: Request, res: Response) => {
+const handleCreateQuestion = async (req: AuthRequest, res: Response) => {
   const body = req.body as BIDataQuestion
   try {
     validateQuestionData(body)
@@ -53,8 +107,9 @@ const handleCreateQuestion = async (req: Request, res: Response) => {
 
   const core = ConnectionsFactory.get() as MongoConnection
 
+  let connection
   try {
-    const connection = await core.client
+    connection = await core.client
       .collection('Connections')
       .findOne({ _id: new ObjectId(body.connection_id) })
     if (!connection) {
@@ -67,8 +122,11 @@ const handleCreateQuestion = async (req: Request, res: Response) => {
   }
 
   const questionDocument = await core.client.collection('Questions').insertOne({
+    query: INITIAL_QUERY[connection.driver](req.user),
     ...body,
     connection_id: new ObjectId(body.connection_id),
+    creator_id: req.user._id,
+    owner_id: req.user._id,
   })
   return res.send({
     _id: questionDocument.insertedId,
@@ -76,7 +134,7 @@ const handleCreateQuestion = async (req: Request, res: Response) => {
   })
 }
 
-const handleUpdateQuestion = async (req: Request, res: Response) => {
+const handleUpdateQuestion = async (req: AuthRequest, res: Response) => {
   const id = new ObjectId(req.params.id)
   const body = req.body as BIDataQuestion & { _id: string }
   delete body._id
@@ -87,6 +145,16 @@ const handleUpdateQuestion = async (req: Request, res: Response) => {
 
   const core = ConnectionsFactory.get() as MongoConnection
 
+  const existingQuestion = await core.client
+    .collection('Questions')
+    .findOne({ _id: id })
+  if (!existingQuestion) {
+    throw new APIError('No question found', 404)
+  }
+  if (!existingQuestion.owner_id.equals(req.user._id)) {
+    throw new APIError('Do not have rights to edit the dashboard', 401)
+  }
+
   const updatedQuestion = await core.client
     .collection('Questions')
     .findOneAndUpdate({ _id: id }, { $set: body }, { returnOriginal: false })
@@ -94,15 +162,25 @@ const handleUpdateQuestion = async (req: Request, res: Response) => {
   return res.send(updatedQuestion.value)
 }
 
-const handleDeleteQuestion = async (req: Request, res: Response) => {
+const handleDeleteQuestion = async (req: AuthRequest, res: Response) => {
   const id = new ObjectId(req.params.id)
   const core = ConnectionsFactory.get() as MongoConnection
+
+  const existingQuestion = await core.client
+    .collection('Questions')
+    .findOne({ _id: id })
+  if (!existingQuestion) {
+    throw new APIError('No question found', 404)
+  }
+  if (!existingQuestion.owner_id.equals(req.user._id)) {
+    throw new APIError('Do not have rights to edit the dashboard', 401)
+  }
 
   await core.client.collection('Questions').deleteOne({ _id: id })
   return res.status(200).send()
 }
 
-const handleGetLastExecution = async (req: Request, res: Response) => {
+const handleGetLastExecution = async (req: AuthRequest, res: Response) => {
   const id = new ObjectId(req.params.id)
   const core = ConnectionsFactory.get() as MongoConnection
 
@@ -123,11 +201,15 @@ const handleGetLastExecution = async (req: Request, res: Response) => {
   return res.status(apiError.status).send(apiError)
 }
 
-QuestionsAPI.get('/', withCatch(handleListQuestions))
-QuestionsAPI.get('/:id', withCatch(handleGetQuestion))
-QuestionsAPI.get('/:id/executions/last', withCatch(handleGetLastExecution))
-QuestionsAPI.post('/', withCatch(handleCreateQuestion))
-QuestionsAPI.put('/:id', withCatch(handleUpdateQuestion))
-QuestionsAPI.delete('/:id', withCatch(handleDeleteQuestion))
+QuestionsAPI.get('/', requiresAuth(), withCatch(handleListQuestions))
+QuestionsAPI.get('/:id', requiresAuth(), withCatch(handleGetQuestion))
+QuestionsAPI.get(
+  '/:id/executions/last',
+  requiresAuth(),
+  withCatch(handleGetLastExecution)
+)
+QuestionsAPI.post('/', requiresAuth(), withCatch(handleCreateQuestion))
+QuestionsAPI.put('/:id', requiresAuth(), withCatch(handleUpdateQuestion))
+QuestionsAPI.delete('/:id', requiresAuth(), withCatch(handleDeleteQuestion))
 
 export default QuestionsAPI

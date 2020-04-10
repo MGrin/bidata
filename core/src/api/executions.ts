@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express'
+import { Router, Response } from 'express'
 import ConnectionsFactory from '../connections'
 import MongoConnection from '../connections/mongo'
 import { APIError, withCatch } from './utils'
@@ -6,6 +6,7 @@ import { BIDataQuestion } from './questions'
 import { BIDataConnection } from './connections'
 import { ObjectId } from 'mongodb'
 import getExecutor from '../Executor'
+import { AuthRequest, requiresAuth } from '../middlewares'
 
 export enum BIDataExecutionState {
   'CREATED' = 'CREATED',
@@ -28,7 +29,7 @@ export type BIDataExecution = {
 
 const ExecutionsAPI = Router()
 
-const handleGetExecution = async (req: Request, res: Response) => {
+const handleGetExecution = async (req: AuthRequest, res: Response) => {
   const id = new ObjectId(req.params.id)
   const core = ConnectionsFactory.get() as MongoConnection
 
@@ -43,7 +44,7 @@ const handleGetExecution = async (req: Request, res: Response) => {
   return res.send(execution)
 }
 
-const handleCreateExecution = async (req: Request, res: Response) => {
+const handleCreateExecution = async (req: AuthRequest, res: Response) => {
   const body = req.body as BIDataExecution
   const core = ConnectionsFactory.get() as MongoConnection
 
@@ -52,10 +53,12 @@ const handleCreateExecution = async (req: Request, res: Response) => {
     ...body,
     question_id: new ObjectId(body.question_id),
     connection_id: new ObjectId(body.connection_id),
+    creator_id: req.user._id,
     state: BIDataExecutionState.CREATED,
     created: now,
     updated: now,
   })
+
   const execution = (await core.client
     .collection('Executions')
     .findOne({ _id: executionInsert.insertedId })) as BIDataExecution
@@ -144,6 +147,6 @@ const handleCreateExecution = async (req: Request, res: Response) => {
   }
 }
 
-ExecutionsAPI.get('/:id', withCatch(handleGetExecution))
-ExecutionsAPI.post('/', withCatch(handleCreateExecution))
+ExecutionsAPI.get('/:id', requiresAuth(), withCatch(handleGetExecution))
+ExecutionsAPI.post('/', requiresAuth(), withCatch(handleCreateExecution))
 export default ExecutionsAPI

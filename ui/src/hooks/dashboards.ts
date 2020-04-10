@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import { useQuery } from 'react-fetching-library'
 import { fetchDashboardsAction, fetchDashboardAction } from '../service'
 

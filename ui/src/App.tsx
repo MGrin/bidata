@@ -25,7 +25,10 @@ export default () => (
         <Header />
         <Switch>
           <ProtectedRoute path="/home" component={Home} />
-          <ProtectedRoute path="/dashboards/:dashboard_id" component={Dashboard} />
+          <ProtectedRoute
+            path="/dashboards/:dashboard_id"
+            component={Dashboard}
+          />
           <ProtectedRoute path="/dashboards" component={Dashboards} />
           <ProtectedRoute path="/questions/:question_id" component={Question} />
           <ProtectedRoute path="/questions" component={Questions} />

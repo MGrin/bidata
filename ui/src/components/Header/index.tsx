@@ -21,21 +21,20 @@ import {
   Popover,
 } from '@material-ui/core'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-import { useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@material-ui/core/styles'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { useLocation, useHistory } from 'react-router-dom'
 import AddIcon from '@material-ui/icons/Add'
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import AddCircleIcon from '@material-ui/icons/AddCircle'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer'
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent'
 import MenuIcon from '@material-ui/icons/Menu'
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import NewQuestioForm from './NewQuestionForm'
 import NewDashboardForm from './NewDashboardForm'
 import GoogleIcon from '../GoogleIcon'
-import { useUser } from '../../hooks';
-import classes from '*.module.css';
+import { useUser } from '../../hooks'
 
 const Title = () => {
   const location = useLocation<{ title?: string }>()
@@ -44,8 +43,8 @@ const Title = () => {
     .filter((p: string, idx: number, self: string[]) => self.indexOf(p) === idx)
   let accPath = '/'
 
-  const theme = useTheme();
-  const isXS = useMediaQuery(theme.breakpoints.down('xs'));
+  const theme = useTheme()
+  const isXS = useMediaQuery(theme.breakpoints.down('xs'))
 
   if (isXS) {
     path = [path[path.length - 1]]
@@ -132,16 +131,16 @@ const useAvatarStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(4),
       height: theme.spacing(4),
     },
-  }),
-);
+  })
+)
 
 const useMenuStyles = makeStyles((theme: Theme) =>
   createStyles({
     popover: {
-      marginTop: theme.spacing(2)
+      marginTop: theme.spacing(2),
     },
-  }),
-);
+  })
+)
 
 type HeaderContentProps = {
   openMenu: () => void
@@ -179,22 +178,20 @@ const HeaderContent = ({
         </Box>
         <Box display="flex" flexDirection="row" alignItems="center">
           {isXS ? (
-            <IconButton
-              color="inherit"
-              onClick={openAddNewSelector}>
+            <IconButton color="inherit" onClick={openAddNewSelector}>
               <AddCircleIcon />
             </IconButton>
           ) : (
-              <Button
-                variant="outlined"
-                color="inherit"
-                size="small"
-                startIcon={<AddIcon />}
-                onClick={openAddNewSelector}
-              >
-                Add new ...
-              </Button>
-            )}
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="small"
+              startIcon={<AddIcon />}
+              onClick={openAddNewSelector}
+            >
+              Add new ...
+            </Button>
+          )}
           <Box m={1} />
           <IconButton onClick={openUserMenu}>
             <Avatar
@@ -208,7 +205,6 @@ const HeaderContent = ({
     </Toolbar>
   )
 }
-
 
 type AddNewSelectorProps = {
   open: boolean
@@ -263,12 +259,7 @@ type UserMenuProps = {
   logout: () => void
   onClose: () => void
 }
-const UserMenu = ({
-  open,
-  anchorEl,
-  logout,
-  onClose,
-}: UserMenuProps) => {
+const UserMenu = ({ open, anchorEl, logout, onClose }: UserMenuProps) => {
   return (
     <Popover
       open={open}
@@ -297,7 +288,10 @@ const HeaderForAuthenticatedUser = React.memo(() => {
   const history = useHistory()
 
   const [addAnchorEl, setAddAnchorEl] = React.useState<HTMLElement | null>(null)
-  const [userMenuAnchorEl, setUserMenuAnchorEl] = React.useState<HTMLElement | null>(null)
+  const [
+    userMenuAnchorEl,
+    setUserMenuAnchorEl,
+  ] = React.useState<HTMLElement | null>(null)
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
 
   const [isNewQuestionFormOpen, setNewQuestionFormOpen] = React.useState(false)

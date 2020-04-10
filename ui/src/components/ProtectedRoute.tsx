@@ -25,11 +25,7 @@ type ProtectedRouteProps = {
   roles?: string[]
 } & RouteProps
 
-export default ({
-  component,
-  roles,
-  ...props
-}: ProtectedRouteProps) => {
+export default ({ component, roles, ...props }: ProtectedRouteProps) => {
   const { user } = useUser()
   const RouteComponent = component
 
@@ -37,8 +33,12 @@ export default ({
     <Route
       {...props}
       exact
-      render={routeProps =>
-        hasAtLeastOneRole(user, roles) ? <RouteComponent {...routeProps} /> : <Redirect to="/" />
+      render={(routeProps) =>
+        hasAtLeastOneRole(user, roles) ? (
+          <RouteComponent {...routeProps} />
+        ) : (
+          <Redirect to="/" />
+        )
       }
     />
   )

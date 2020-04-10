@@ -41,12 +41,19 @@ const initGoogleApiEffect = (onResult: (result: boolean) => void) => () => {
 
 export default ({ children }: { children: any }) => {
   const [GAPIInited, setGAPIInited] = React.useState(false)
-  const [token, setToken] = React.useState<string | undefined>(localStorage.getItem('token') || undefined)
+  const [token, setToken] = React.useState<string | undefined>(
+    localStorage.getItem('token') || undefined
+  )
   const [user, setUser] = React.useState<User>()
   const [loading, setLoading] = React.useState(true)
 
   const { query } = useClient()
-  const { loading: loadingGoogle, error: errorGoogle, payload: payloadGoogle, mutate: loginWithGoogle } = useMutation(loginWithGoogleAction)
+  const {
+    loading: loadingGoogle,
+    error: errorGoogle,
+    payload: payloadGoogle,
+    mutate: loginWithGoogle,
+  } = useMutation(loginWithGoogleAction)
 
   React.useEffect(initGoogleApiEffect(setGAPIInited), [])
   React.useEffect(() => {
@@ -60,15 +67,14 @@ export default ({ children }: { children: any }) => {
           lastName: googleProfile.getFamilyName(),
           picture: googleProfile.getImageUrl(),
         }
-        loginWithGoogle(profile)
-          .then(({ error, payload }) => {
-            if (!error) {
-              setToken(payload.token)
-            }
-          })
+        loginWithGoogle(profile).then(({ error, payload }) => {
+          if (!error) {
+            setToken(payload.token)
+          }
+        })
       }
     }
-  }, [GAPIInited])
+  }, [GAPIInited, loginWithGoogle, token])
 
   React.useEffect(() => {
     if (!token) {
@@ -77,26 +83,23 @@ export default ({ children }: { children: any }) => {
       localStorage.removeItem('token')
     } else {
       setLoading(true)
-      query(fetchUserForToken(token))
-        .then(({ error, payload }) => {
-          if (error) {
-            console.error(payload)
-            setToken(undefined)
-            setUser(undefined)
-            setLoading(false)
-          } else {
-            setUser(payload)
-            setLoading(false)
-            localStorage.setItem('token', token)
-          }
-        })
+      query(fetchUserForToken(token)).then(({ error, payload }) => {
+        if (error) {
+          console.error(payload)
+          setToken(undefined)
+          setUser(undefined)
+          setLoading(false)
+        } else {
+          setUser(payload)
+          setLoading(false)
+          localStorage.setItem('token', token)
+        }
+      })
     }
   }, [token, query])
 
   if (loading) {
-    return (
-      <h1>Loading user</h1>
-    )
+    return <h1>Loading user</h1>
   }
 
   const login = (provider: string) => {
@@ -124,8 +127,9 @@ export default ({ children }: { children: any }) => {
         setToken,
         setUser,
         login: GAPIInited ? login : NOOP,
-        logout: GAPIInited ? logout : NOOP
-      }}>
+        logout: GAPIInited ? logout : NOOP,
+      }}
+    >
       {children}
     </userContext.Provider>
   )
