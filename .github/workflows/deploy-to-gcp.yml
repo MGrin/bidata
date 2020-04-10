@@ -21,7 +21,7 @@ jobs:
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Build
       run: |
-        docker-compose build -f docker-compose.ci.yaml
+        docker-compose -f docker-compose.ci.yaml build
     - name: Push
       run: |
-        docker-compose push -f docker-compose.ci.yaml
+        docker-compose -f docker-compose.ci.yaml push
