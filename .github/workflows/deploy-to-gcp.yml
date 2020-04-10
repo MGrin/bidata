@@ -1,0 +1,27 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check if docker and docker-compose is running
+      run: |
+        docker --version
+        docker-compose --version
+    - name: Login
+      run: |
+        echo ${{ secrets.DOCKER_USERNAME }} ${{ secrets.DOCKER_PASSWORD }}
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build
+      run: |
+        docker-compose -f docker-compose.ci.yaml build
+    - name: Push
+      run: |
+        docker-compose -f docker-compose.ci.yaml push
