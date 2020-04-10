@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 import { Box, Link, Grid, Typography } from '@material-ui/core'
+import { useTheme } from '@material-ui/core/styles';
 import { useDashboard, useQuestion } from '../../hooks'
 import { QuestionResultCard } from '../../components'
 
@@ -42,6 +43,8 @@ export default () => {
   const history = useHistory()
   const location = useLocation<{ title?: string }>()
   const match = useRouteMatch<{ dashboard_id: string }>()
+  const theme = useTheme()
+
   const { dashboard_id } = match.params
 
   const { loading, error, dashboard } = useDashboard(dashboard_id)
@@ -55,7 +58,7 @@ export default () => {
       {loading && <h1>Loading</h1>}
       {error && <h1>Error</h1>}
       {dashboard && (
-        <Box width="100%">
+        <Box width="100%" m={1}>
           <Grid
             container
             direction="row"
@@ -64,14 +67,7 @@ export default () => {
             wrap="wrap"
           >
             {dashboard.questions.map((questionId: string) => (
-              <Box width="calc((100% - 64px)/2)" mb={6}>
-                <Grid key={questionId} item>
-                  <Tile questionId={questionId} />
-                </Grid>
-              </Box>
-            ))}
-            {dashboard.questions.map((questionId: string) => (
-              <Box width="calc((100% - 64px)/2)">
+              <Box width={`min(${theme.breakpoints.values.sm}px, 100%)`} mb={6}>
                 <Grid key={questionId} item>
                   <Tile questionId={questionId} />
                 </Grid>

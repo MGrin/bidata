@@ -100,11 +100,7 @@ const handleCreateConnection = async (req: Request, res: Response) => {
       .join()
   }
 
-  try {
-    validateConnectionData(body)
-  } catch (e) {
-    return res.status(e.status).send(e)
-  }
+  validateConnectionData(body)
 
   try {
     const connection = ConnectionsFactory.createConnection(body)

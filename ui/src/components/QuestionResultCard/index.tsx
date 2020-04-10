@@ -1,5 +1,7 @@
 import * as React from 'react'
 import { TablePagination, Box, Paper } from '@material-ui/core'
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useResult, useQuestionSettings } from '../../hooks'
 import Footer from './Footer'
 import Result from './Result'
@@ -26,6 +28,9 @@ export default React.memo(
     openVisualSettingsForm,
     onResultUpdate,
   }: Props) => {
+    const theme = useTheme()
+    const isXS = useMediaQuery(theme.breakpoints.down('sm'))
+
     const { loading, error, result, execution, setExecution } = useResult(
       onResultUpdate || NOOP
     )
@@ -82,6 +87,8 @@ export default React.memo(
                 page={page}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
+                labelRowsPerPage={isXS ? null : undefined}
+                labelDisplayedRows={isXS ? ({ page }) => (page + 1) : undefined}
               />
             </Paper>
           </Box>

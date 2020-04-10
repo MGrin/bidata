@@ -18,9 +18,12 @@ import {
   Divider,
 } from '@material-ui/core'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useLocation, useHistory } from 'react-router-dom'
 import { Skeleton } from '@material-ui/lab'
 import AddIcon from '@material-ui/icons/Add'
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer'
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent'
@@ -31,11 +34,17 @@ import NewDashboardForm from './NewDashboardForm'
 
 const Title = () => {
   const location = useLocation<{ title?: string }>()
-  const path = location.pathname
+  let path = location.pathname
     .split('/')
     .filter((p: string, idx: number, self: string[]) => self.indexOf(p) === idx)
   let accPath = '/'
 
+  const theme = useTheme();
+  const isXS = useMediaQuery(theme.breakpoints.down('xs'));
+
+  if (isXS) {
+    path = [path[path.length - 1]]
+  }
   return (
     <Breadcrumbs color="primary.contrastText">
       {path.map((page: string, idx: number) => {
@@ -84,7 +93,7 @@ const DrawerMenu = ({ open, navigate, onClose }: DrawerMenuProps) => {
           <Skeleton variant="circle" width={80} height={80} />
           <Skeleton variant="text" />
         </Box>
-        <List>
+        <List dense>
           <ListItem
             button
             selected={location.pathname === '/dashboards'}
@@ -107,7 +116,7 @@ const DrawerMenu = ({ open, navigate, onClose }: DrawerMenuProps) => {
           </ListItem>
         </List>
         <Divider />
-        <List>
+        <List dense>
           <ListItem
             button
             selected={location.pathname === '/admin'}
@@ -118,7 +127,7 @@ const DrawerMenu = ({ open, navigate, onClose }: DrawerMenuProps) => {
             </ListItemIcon>
             <ListItemText primary="Admin" />
           </ListItem>
-          <List component="div" disablePadding className={classes.nested}>
+          <List component="div" dense disablePadding className={classes.nested}>
             <ListItem
               button
               selected={location.pathname === '/admin/connections'}
@@ -143,39 +152,52 @@ type HeaderContentProps = {
 const HeaderContent = ({
   openMenu,
   openAddNewSelector,
-}: HeaderContentProps) => (
-  <Toolbar style={{ paddingLeft: 0 }}>
-    <Grid
-      container
-      direction="row"
-      justify="space-between"
-      align-items="center"
-    >
-      <Box
-        color="primary.contrastText"
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
+}: HeaderContentProps) => {
+  const theme = useTheme();
+  const isXS = useMediaQuery(theme.breakpoints.down('xs'));
+
+  return (
+    <Toolbar style={{ paddingLeft: 0 }}>
+      <Grid
+        container
+        direction="row"
+        justify="space-between"
+        align-items="center"
       >
-        <IconButton style={{ color: 'white' }} onClick={openMenu}>
-          <MenuIcon />
-        </IconButton>
-        <Title />
-      </Box>
-      <Box display="flex" flexDirection="row" alignItems="center">
-        <Button
-          variant="outlined"
-          color="inherit"
-          size="small"
-          startIcon={<AddIcon />}
-          onClick={openAddNewSelector}
+        <Box
+          color="primary.contrastText"
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
         >
-          Add new ...
-        </Button>
-      </Box>
-    </Grid>
-  </Toolbar>
-)
+          <IconButton style={{ color: 'white' }} onClick={openMenu}>
+            <MenuIcon />
+          </IconButton>
+          <Title />
+        </Box>
+        <Box display="flex" flexDirection="row" alignItems="center">
+          {isXS ? (
+            <IconButton
+              color="inherit"
+              onClick={openAddNewSelector}>
+              <AddCircleIcon />
+            </IconButton>
+          ) : (
+              <Button
+                variant="outlined"
+                color="inherit"
+                size="small"
+                startIcon={<AddIcon />}
+                onClick={openAddNewSelector}
+              >
+                Add new ...
+              </Button>
+            )}
+        </Box>
+      </Grid>
+    </Toolbar>
+  )
+}
 
 type AddNewSelectorProps = {
   open: boolean
@@ -191,21 +213,21 @@ const AddNewSelector = ({
   openNewQuestion,
   onClose,
 }: AddNewSelectorProps) => (
-  <Menu open={open} keepMounted anchorEl={anchorEl} onClose={onClose}>
-    <MenuItem onClick={openNewDashboard}>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </MenuItem>
-    <MenuItem onClick={openNewQuestion}>
-      <ListItemIcon>
-        <QuestionAnswerIcon />
-      </ListItemIcon>
-      <ListItemText primary="Question" />
-    </MenuItem>
-  </Menu>
-)
+    <Menu open={open} keepMounted anchorEl={anchorEl} onClose={onClose}>
+      <MenuItem onClick={openNewDashboard}>
+        <ListItemIcon>
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Dashboard" />
+      </MenuItem>
+      <MenuItem onClick={openNewQuestion}>
+        <ListItemIcon>
+          <QuestionAnswerIcon />
+        </ListItemIcon>
+        <ListItemText primary="Question" />
+      </MenuItem>
+    </Menu>
+  )
 
 export default React.memo(() => {
   const history = useHistory()

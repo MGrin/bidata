@@ -2,17 +2,16 @@ import * as dotenv from 'dotenv'
 import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
+import { ObjectId } from 'mongodb'
 import ConnectionsAPI, { SUPPORTED_DRIVERS } from './api/connections'
 import QuestionsAPI from './api/questions'
 import ExecutionsAPI from './api/executions'
 import ResultsAPI from './api/results'
 import DashboardsAPI from './api/dashboards'
 import UIAPI from './api/ui'
-
 import ConnectionsFactory from './connections'
 import MongoConnection from './connections/mongo'
 import { encrypt } from './crypto'
-import { ObjectId } from 'mongodb'
 
 dotenv.config()
 
@@ -42,8 +41,8 @@ const main = async () => {
   app.use('/executions', ExecutionsAPI)
   app.use('/results', ResultsAPI)
   app.use('/dashboards', DashboardsAPI)
-
   app.use('/ui', UIAPI)
+
   app.listen(API_PORT, () =>
     console.warn(`BIData Core service started at port ${API_PORT}`)
   )
