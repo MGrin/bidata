@@ -12,25 +12,35 @@ export type BIDataUser = {
   lastName: string
   picture?: string
 }
-export const createUser = async (provider: SUPPORTED_STRATEGIES, data: BIDataUser, providerData: any) => {
+export const createUser = async (
+  provider: SUPPORTED_STRATEGIES,
+  data: BIDataUser,
+  providerData: any
+) => {
   const core = ConnectionsFactory.get() as MongoConnection
-  let user = await core.client.collection('Users').findOne({ email: data.email })
+  let user = await core.client
+    .collection('Users')
+    .findOne({ email: data.email })
 
   if (user) {
     user = await core.client
       .collection('Users')
-      .findOneAndUpdate({ _id: user._id }, { $set: { [`providers.${provider}`]: providerData } }, { returnOriginal: false })
+      .findOneAndUpdate(
+        { _id: user._id },
+        { $set: { [`providers.${provider}`]: providerData } },
+        { returnOriginal: false }
+      )
     user = user.value
   } else {
-    const userDocument = await core.client
+    const userDocument = await core.client.collection('Users').insertOne({
+      ...data,
+      providers: {
+        [provider]: providerData,
+      },
+    })
+    user = await core.client
       .collection('Users')
-      .insertOne({
-        ...data,
-        providers: {
-          [provider]: providerData
-        }
-      })
-    user = await core.client.collection('Users').findOne({ _id: userDocument.insertedId })
+      .findOne({ _id: userDocument.insertedId })
   }
 
   return user
@@ -42,14 +52,16 @@ const handleCreateUser = async (req: Request, res: Response) => {
   const data = {
     email: req.body.email,
     firstName: req.body.firstName,
-    lastName: req.body.lastName
+    lastName: req.body.lastName,
   } as BIDataUser
 
   if (!data.email || !data.firstName || !data.lastName) {
     throw new APIError('Provide all required information', 400)
   }
   const core = ConnectionsFactory.get() as MongoConnection
-  const existingUser = await core.client.collection('Users').findOne({ email: data.email })
+  const existingUser = await core.client
+    .collection('Users')
+    .findOne({ email: data.email })
   if (existingUser) {
     throw new APIError('User with provided email already registered', 400)
   }
@@ -63,7 +75,7 @@ const handleCreateUser = async (req: Request, res: Response) => {
     email: data.email,
     password: hashedPassword,
     salt: salt,
-    strategy: SUPPORTED_STRATEGIES.password
+    strategy: SUPPORTED_STRATEGIES.password,
   })
 
   const token = await createToken(user._id, SUPPORTED_STRATEGIES.password)
@@ -73,9 +85,7 @@ const handleCreateUser = async (req: Request, res: Response) => {
 const handleGetUserById = async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id)
   const core = ConnectionsFactory.get() as MongoConnection
-  const user = await core.client
-    .collection('Users')
-    .findOne({ _id: id })
+  const user = await core.client.collection('Users').findOne({ _id: id })
 
   return res.send(user)
 }
