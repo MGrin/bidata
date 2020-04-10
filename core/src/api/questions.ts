@@ -30,7 +30,8 @@ const INITIAL_QUERY = {
  * 
  * Have fun!
  */`,
-  [SUPPORTED_DRIVERS.postgresql]: (user: any) => `-- Hi ${user.firstName || ''}! Happy to see you here.
+  [SUPPORTED_DRIVERS.postgresql]: (user: any) => `-- Hi ${user.firstName ||
+    ''}! Happy to see you here.
 -- This is the PostgresQL shell.
 -- You can write raw SQL here, like this:
 
@@ -65,12 +66,15 @@ const validateQuestionData = (body: BIDataQuestion) => {
 const handleListQuestions = async (req: AuthRequest, res: Response) => {
   const core = (await ConnectionsFactory.get()) as MongoConnection
   const questions = await core.client.collection('Questions').find({
-    $or: [{
-      owner_id: req.user._id,
-      private: true
-    }, {
-      private: false
-    }]
+    $or: [
+      {
+        owner_id: req.user._id,
+        private: true,
+      },
+      {
+        private: false,
+      },
+    ],
   })
   const questionsAsArr = await questions.toArray()
   return res.send(questionsAsArr)
@@ -122,7 +126,7 @@ const handleCreateQuestion = async (req: AuthRequest, res: Response) => {
     ...body,
     connection_id: new ObjectId(body.connection_id),
     creator_id: req.user._id,
-    owner_id: req.user._id
+    owner_id: req.user._id,
   })
   return res.send({
     _id: questionDocument.insertedId,
@@ -199,7 +203,11 @@ const handleGetLastExecution = async (req: AuthRequest, res: Response) => {
 
 QuestionsAPI.get('/', requiresAuth(), withCatch(handleListQuestions))
 QuestionsAPI.get('/:id', requiresAuth(), withCatch(handleGetQuestion))
-QuestionsAPI.get('/:id/executions/last', requiresAuth(), withCatch(handleGetLastExecution))
+QuestionsAPI.get(
+  '/:id/executions/last',
+  requiresAuth(),
+  withCatch(handleGetLastExecution)
+)
 QuestionsAPI.post('/', requiresAuth(), withCatch(handleCreateQuestion))
 QuestionsAPI.put('/:id', requiresAuth(), withCatch(handleUpdateQuestion))
 QuestionsAPI.delete('/:id', requiresAuth(), withCatch(handleDeleteQuestion))

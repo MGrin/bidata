@@ -11,9 +11,13 @@ export class APIError {
 }
 
 export const withCatch = (
-  handler: (req: AuthRequest, res: Response, next?: NextFunction) => Promise<any>
+  handler: (
+    req: AuthRequest,
+    res: Response,
+    next?: NextFunction
+  ) => Promise<any>
 ) => (req: AuthRequest, res: Response, next?: NextFunction) =>
-    handler(req, res, next).catch(e => {
-      const apiError = new APIError(e.message, e.status)
-      return res.status(apiError.status).send(apiError)
-    })
+  handler(req, res, next).catch(e => {
+    const apiError = new APIError(e.message, e.status)
+    return res.status(apiError.status).send(apiError)
+  })

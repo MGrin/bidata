@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 import { Box, Link, Grid, Typography } from '@material-ui/core'
-import { useTheme } from '@material-ui/core/styles';
+import { useTheme } from '@material-ui/core/styles'
 import { useDashboard, useQuestion } from '../../hooks'
 import { QuestionResultCard } from '../../components'
 

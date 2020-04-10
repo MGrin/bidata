@@ -24,11 +24,14 @@ const validateDashboardData = (dashboard: BIDataDashboard) => {
 const handleListDashboards = async (req: AuthRequest, res: Response) => {
   const core = (await ConnectionsFactory.get()) as MongoConnection
   const dashboards = await core.client.collection('Dashboards').find({
-    $or: [{
-      owner_id: req.user._id,
-    }, {
-      private: false
-    }]
+    $or: [
+      {
+        owner_id: req.user._id,
+      },
+      {
+        private: false,
+      },
+    ],
   })
   const dashboardsAsArr = await dashboards.toArray()
   return res.send(dashboardsAsArr)
@@ -75,7 +78,7 @@ const handleCreateDashboard = async (req: AuthRequest, res: Response) => {
       creator_id: req.user._id,
       owner_id: req.user._id,
       created: new Date(),
-      private: true
+      private: true,
     })
 
   return res.send({
@@ -107,12 +110,16 @@ const handleUpdateDashboard = async (req: AuthRequest, res: Response) => {
   }
   const updatedDashboard = await core.client
     .collection('Dashboards')
-    .findOneAndUpdate({ _id: id }, {
-      $set: {
-        ...body,
-        updated: new Date()
-      }
-    }, { returnOriginal: false })
+    .findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          ...body,
+          updated: new Date(),
+        },
+      },
+      { returnOriginal: false }
+    )
   return res.send(updatedDashboard.value)
 }
 

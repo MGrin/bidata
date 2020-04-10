@@ -11,7 +11,7 @@ export type User = {
 }
 
 type UserContext = {
-  user?: User,
+  user?: User
   setToken?: (token?: string) => void
   setUser?: (user?: User) => void
   login: (provider: string) => void

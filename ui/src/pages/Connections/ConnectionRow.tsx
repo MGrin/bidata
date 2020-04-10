@@ -43,7 +43,8 @@ const DriverIcon = ({ driver }: { driver: string }) => {
       )
     }
 
-    default: return null
+    default:
+      return null
   }
 }
 export default React.memo(({ connection, onEdit }: Props) => {

@@ -23,9 +23,9 @@ export type BIDataConnectionParams =
   | BIDataPostgresConnectionParams
 export type BIDataConnection = {
   _id: ObjectId
-  owner_id: ObjectId,
-  creator_id: ObjectId,
-  private: boolean,
+  owner_id: ObjectId
+  creator_id: ObjectId
+  private: boolean
   name: string
   driver: SUPPORTED_DRIVERS
   params: BIDataConnectionParams
@@ -65,11 +65,14 @@ const validateConnectionData = (connection: BIDataConnection) => {
 const handleListConnections = async (req: AuthRequest, res: Response) => {
   const core = (await ConnectionsFactory.get()) as MongoConnection
   const connections = await core.client.collection('Connections').find({
-    $or: [{
-      creator_id: req.user._id,
-    }, {
-      private: false,
-    }]
+    $or: [
+      {
+        creator_id: req.user._id,
+      },
+      {
+        private: false,
+      },
+    ],
   })
   const connectionsAsArr = await connections.toArray()
   return res.send(connectionsAsArr)
@@ -86,7 +89,10 @@ const handleGetConnection = async (req: AuthRequest, res: Response) => {
     throw new APIError('Connection not found', 404)
   }
   if (connection.private && !connection.owner_id.equals(req.user._id)) {
-    throw new APIError('You do not have permissions to see this connection', 401)
+    throw new APIError(
+      'You do not have permissions to see this connection',
+      401
+    )
   }
   return res.send(connection)
 }
@@ -184,12 +190,16 @@ const handleUpdateConnection = async (req: AuthRequest, res: Response) => {
 
   const updatedConnection = await core.client
     .collection('Connections')
-    .findOneAndUpdate({ _id: id }, {
-      $set: {
-        ...body,
-        updated: new Date(),
-      }
-    }, { returnOriginal: false })
+    .findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          ...body,
+          updated: new Date(),
+        },
+      },
+      { returnOriginal: false }
+    )
   return res.send(updatedConnection.value)
 }
 
@@ -217,7 +227,10 @@ const handleGetDrivers = async (req: AuthRequest, res: Response) => {
   return res.send(Object.keys(SUPPORTED_DRIVERS))
 }
 
-const handleGetConnectionConnectivity = async (req: AuthRequest, res: Response) => {
+const handleGetConnectionConnectivity = async (
+  req: AuthRequest,
+  res: Response
+) => {
   const id = new ObjectId(req.params.id)
   const core = ConnectionsFactory.get() as MongoConnection
   const connectionDesction = await core.client
@@ -235,7 +248,11 @@ const handleGetConnectionConnectivity = async (req: AuthRequest, res: Response) 
 ConnectionsAPI.get('/', requiresAuth(), withCatch(handleListConnections))
 ConnectionsAPI.get('/drivers', requiresAuth(), withCatch(handleGetDrivers))
 ConnectionsAPI.get('/:id', requiresAuth(), withCatch(handleGetConnection))
-ConnectionsAPI.get('/:id/connectivity', requiresAuth(), withCatch(handleGetConnectionConnectivity))
+ConnectionsAPI.get(
+  '/:id/connectivity',
+  requiresAuth(),
+  withCatch(handleGetConnectionConnectivity)
+)
 ConnectionsAPI.post('/', requiresAuth(), withCatch(handleCreateConnection))
 ConnectionsAPI.put('/:id', requiresAuth(), withCatch(handleUpdateConnection))
 ConnectionsAPI.delete('/:id', requiresAuth(), withCatch(handleDeleteConnection))

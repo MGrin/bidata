@@ -5,20 +5,22 @@ export const AUTH = process.env.REACT_APP_AUTH_HOST
 
 const SERVICES = {
   API: process.env.REACT_APP_API_HOST,
-  AUTH: process.env.REACT_APP_AUTH_HOST
+  AUTH: process.env.REACT_APP_AUTH_HOST,
 }
 
 export type ServicePointer = {
   service?: 'API' | 'AUTH'
 }
 
-export const requestHostInterceptor = () => async (action: Action & ServicePointer) => {
+export const requestHostInterceptor = () => async (
+  action: Action & ServicePointer
+) => {
   return {
     ...action,
     endpoint: `${SERVICES[action.service || 'API']}${action.endpoint}`,
     headers: {
-      'x-auth': localStorage.getItem('token') || ''
-    }
+      'x-auth': localStorage.getItem('token') || '',
+    },
   }
 }
 
@@ -183,12 +185,12 @@ export const fetchUserForToken: (token: string) => Action & ServicePointer = (
 ) => ({
   method: 'GET',
   endpoint: `/tokens/user?token=${token}`,
-  service: 'AUTH'
+  service: 'AUTH',
 })
 
 export const loginWithGoogleAction: (auth: any) => Action = (auth) => ({
   method: 'POST',
   endpoint: '/tokens/google',
   service: 'AUTH',
-  body: auth
+  body: auth,
 })

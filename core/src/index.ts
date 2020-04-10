@@ -31,7 +31,7 @@ const main = async () => {
     metadata: {},
   }) as MongoConnection
   const analyticsConnection = new MongoConnection({
-    dsn: encrypt(ANALYTICS_MONGO_URL)
+    dsn: encrypt(ANALYTICS_MONGO_URL),
   })
 
   await coreConnection.checkConectivity()
