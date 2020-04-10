@@ -10,6 +10,6 @@ RUN yarn install
 ADD . /usr/src/app 
 RUN yarn build 
 
-FROM base as build
+FROM base as prod
 WORKDIR /usr/src/app
 CMD [ "yarn", "start" ]

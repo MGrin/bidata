@@ -29,6 +29,9 @@ const main = async () => {
       dsn: encrypt(MONGO_URL),
     },
     metadata: {},
+    owner_id: new ObjectId(),
+    creator_id: new ObjectId(),
+    private: true
   }) as MongoConnection
   const analyticsConnection = new MongoConnection({
     dsn: encrypt(ANALYTICS_MONGO_URL),
