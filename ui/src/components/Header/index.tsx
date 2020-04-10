@@ -18,23 +18,24 @@ import {
   Divider,
   Typography,
   Avatar,
+  Popover,
 } from '@material-ui/core'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useLocation, useHistory } from 'react-router-dom'
-import { Skeleton } from '@material-ui/lab'
 import AddIcon from '@material-ui/icons/Add'
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer'
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent'
 import MenuIcon from '@material-ui/icons/Menu'
-import SettingsIcon from '@material-ui/icons/Settings'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import NewQuestioForm from './NewQuestionForm'
 import NewDashboardForm from './NewDashboardForm'
 import GoogleIcon from '../GoogleIcon'
 import { useUser } from '../../hooks';
+import classes from '*.module.css';
 
 const Title = () => {
   const location = useLocation<{ title?: string }>()
@@ -78,28 +79,16 @@ type DrawerMenuProps = {
   onClose: () => void
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    nested: {
-      paddingLeft: theme.spacing(4),
-    },
-  })
-)
-
 const DrawerMenu = ({ open, navigate, onClose }: DrawerMenuProps) => {
   const location = useLocation()
-  const classes = useStyles()
-  const { user } = useUser()
 
   return (
     <Drawer anchor="left" open={open} onClose={onClose}>
       <Box width={300}>
-        <Box m={2}>
-          <Avatar alt={`${user?.firstName} ${user?.lastName}`} src={user?.picture} />
-          <Box m={1} />
-          <Typography variant="h6">Hi, {user?.firstName}!</Typography>
-        </Box>
         <List dense>
+          <ListItem>
+            <Typography variant="h3">BIData</Typography>
+          </ListItem>
           <ListItem
             button
             selected={location.pathname === '/dashboards'}
@@ -120,47 +109,54 @@ const DrawerMenu = ({ open, navigate, onClose }: DrawerMenuProps) => {
             </ListItemIcon>
             <ListItemText primary="Questions" />
           </ListItem>
-        </List>
-        <Divider />
-        <List dense>
+          <Divider />
           <ListItem
             button
-            selected={location.pathname === '/admin'}
-            onClick={() => navigate('/admin')}
+            selected={location.pathname === '/admin/connections'}
+            onClick={() => navigate('/admin/connections')}
           >
             <ListItemIcon>
-              <SettingsIcon />
+              <SettingsInputComponentIcon />
             </ListItemIcon>
-            <ListItemText primary="Admin" />
+            <ListItemText primary="Connections" />
           </ListItem>
-          <List component="div" dense disablePadding className={classes.nested}>
-            <ListItem
-              button
-              selected={location.pathname === '/admin/connections'}
-              onClick={() => navigate('/admin/connections')}
-            >
-              <ListItemIcon>
-                <SettingsInputComponentIcon />
-              </ListItemIcon>
-              <ListItemText primary="Connections" />
-            </ListItem>
-          </List>
         </List>
       </Box>
     </Drawer>
   )
 }
 
+const useAvatarStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    small: {
+      width: theme.spacing(4),
+      height: theme.spacing(4),
+    },
+  }),
+);
+
+const useMenuStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    popover: {
+      marginTop: theme.spacing(2)
+    },
+  }),
+);
+
 type HeaderContentProps = {
   openMenu: () => void
   openAddNewSelector: (e: any) => void
+  openUserMenu: (e: any) => void
 }
 const HeaderContent = ({
   openMenu,
   openAddNewSelector,
+  openUserMenu,
 }: HeaderContentProps) => {
-  const theme = useTheme();
-  const isXS = useMediaQuery(theme.breakpoints.down('xs'));
+  const theme = useTheme()
+  const isXS = useMediaQuery(theme.breakpoints.down('xs'))
+  const { user } = useUser()
+  const { small } = useAvatarStyles()
 
   return (
     <Toolbar style={{ paddingLeft: 0 }}>
@@ -199,11 +195,20 @@ const HeaderContent = ({
                 Add new ...
               </Button>
             )}
+          <Box m={1} />
+          <IconButton onClick={openUserMenu}>
+            <Avatar
+              alt={`${user?.firstName} ${user?.lastName}`}
+              src={user?.picture}
+              className={small}
+            />
+          </IconButton>
         </Box>
       </Grid>
     </Toolbar>
   )
 }
+
 
 type AddNewSelectorProps = {
   open: boolean
@@ -218,8 +223,24 @@ const AddNewSelector = ({
   openNewDashboard,
   openNewQuestion,
   onClose,
-}: AddNewSelectorProps) => (
-    <Menu open={open} keepMounted anchorEl={anchorEl} onClose={onClose}>
+}: AddNewSelectorProps) => {
+  const classes = useMenuStyles()
+  return (
+    <Popover
+      open={open}
+      keepMounted
+      anchorEl={anchorEl}
+      onClose={onClose}
+      className={classes.popover}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
       <MenuItem onClick={openNewDashboard}>
         <ListItemIcon>
           <DashboardIcon />
@@ -232,14 +253,51 @@ const AddNewSelector = ({
         </ListItemIcon>
         <ListItemText primary="Question" />
       </MenuItem>
-    </Menu>
+    </Popover>
   )
+}
 
-
+type UserMenuProps = {
+  open: boolean
+  anchorEl: Element | null
+  logout: () => void
+  onClose: () => void
+}
+const UserMenu = ({
+  open,
+  anchorEl,
+  logout,
+  onClose,
+}: UserMenuProps) => {
+  return (
+    <Popover
+      open={open}
+      keepMounted
+      anchorEl={anchorEl}
+      onClose={onClose}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      <MenuItem onClick={logout}>
+        <ListItemIcon>
+          <ExitToAppIcon />
+        </ListItemIcon>
+        <ListItemText primary="Log out" />
+      </MenuItem>
+    </Popover>
+  )
+}
 const HeaderForAuthenticatedUser = React.memo(() => {
   const history = useHistory()
 
   const [addAnchorEl, setAddAnchorEl] = React.useState<HTMLElement | null>(null)
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = React.useState<HTMLElement | null>(null)
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
 
   const [isNewQuestionFormOpen, setNewQuestionFormOpen] = React.useState(false)
@@ -247,11 +305,14 @@ const HeaderForAuthenticatedUser = React.memo(() => {
     false
   )
 
+  const { logout } = useUser()
+
   return (
     <AppBar position="static">
       <HeaderContent
         openMenu={() => setIsMenuOpen(true)}
         openAddNewSelector={(e) => setAddAnchorEl(e.currentTarget)}
+        openUserMenu={(e) => setUserMenuAnchorEl(e.currentTarget)}
       />
       <DrawerMenu
         open={isMenuOpen}
@@ -273,6 +334,12 @@ const HeaderForAuthenticatedUser = React.memo(() => {
           setNewQuestionFormOpen(true)
         }}
         onClose={() => setAddAnchorEl(null)}
+      />
+      <UserMenu
+        open={!!userMenuAnchorEl}
+        anchorEl={userMenuAnchorEl}
+        logout={logout}
+        onClose={() => setUserMenuAnchorEl(null)}
       />
       <NewQuestioForm
         open={isNewQuestionFormOpen}
