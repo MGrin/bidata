@@ -16,6 +16,8 @@ import {
   List,
   ListItem,
   Divider,
+  Typography,
+  Avatar,
 } from '@material-ui/core'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles';
@@ -31,6 +33,8 @@ import MenuIcon from '@material-ui/icons/Menu'
 import SettingsIcon from '@material-ui/icons/Settings'
 import NewQuestioForm from './NewQuestionForm'
 import NewDashboardForm from './NewDashboardForm'
+import GoogleIcon from '../GoogleIcon'
+import { useUser } from '../../hooks';
 
 const Title = () => {
   const location = useLocation<{ title?: string }>()
@@ -85,13 +89,15 @@ const useStyles = makeStyles((theme: Theme) =>
 const DrawerMenu = ({ open, navigate, onClose }: DrawerMenuProps) => {
   const location = useLocation()
   const classes = useStyles()
+  const { user } = useUser()
 
   return (
     <Drawer anchor="left" open={open} onClose={onClose}>
       <Box width={300}>
-        <Box m={3}>
-          <Skeleton variant="circle" width={80} height={80} />
-          <Skeleton variant="text" />
+        <Box m={2}>
+          <Avatar alt={`${user?.firstName} ${user?.lastName}`} src={user?.picture} />
+          <Box m={1} />
+          <Typography variant="h6">Hi, {user?.firstName}!</Typography>
         </Box>
         <List dense>
           <ListItem
@@ -229,7 +235,8 @@ const AddNewSelector = ({
     </Menu>
   )
 
-export default React.memo(() => {
+
+const HeaderForAuthenticatedUser = React.memo(() => {
   const history = useHistory()
 
   const [addAnchorEl, setAddAnchorEl] = React.useState<HTMLElement | null>(null)
@@ -285,4 +292,58 @@ export default React.memo(() => {
       />
     </AppBar>
   )
+})
+
+const AnonymousHeader = React.memo(() => {
+  const [signinAnchor, setSigninAnchor] = React.useState<any>()
+  const { login } = useUser()
+
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Grid
+          container
+          direction="row"
+          justify="space-between"
+          align-items="center"
+        >
+          <Typography variant="h6">BIData</Typography>
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="small"
+              disabled={!login}
+              onClick={(e) => setSigninAnchor(e.currentTarget)}
+            >
+              Sign In
+            </Button>
+          </Box>
+        </Grid>
+      </Toolbar>
+      <Menu
+        open={!!signinAnchor}
+        keepMounted
+        anchorEl={signinAnchor}
+        onClose={() => setSigninAnchor(null)}
+      >
+        <MenuItem onClick={() => login && login('google')} dense>
+          <ListItemIcon>
+            <GoogleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Signin with Google" />
+        </MenuItem>
+      </Menu>
+    </AppBar>
+  )
+})
+
+export default React.memo(() => {
+  const { user } = useUser()
+
+  if (user) {
+    return <HeaderForAuthenticatedUser />
+  }
+
+  return <AnonymousHeader />
 })

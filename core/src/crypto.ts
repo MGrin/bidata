@@ -23,7 +23,7 @@ export const generateSalt = () =>
   crypto
     .randomBytes(128)
     .toString('hex')
-    .slice(0, length)
+    .slice(0, 64)
 export const hash = (str: string, salt: string) => {
   const hash = crypto.createHmac('sha512', salt)
   hash.update(str)

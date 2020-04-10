@@ -8,7 +8,6 @@ import QuestionsAPI from './api/questions'
 import ExecutionsAPI from './api/executions'
 import ResultsAPI from './api/results'
 import DashboardsAPI from './api/dashboards'
-import UIAPI from './api/ui'
 import ConnectionsFactory from './connections'
 import MongoConnection from './connections/mongo'
 import { encrypt } from './crypto'
@@ -41,7 +40,6 @@ const main = async () => {
   app.use('/executions', ExecutionsAPI)
   app.use('/results', ResultsAPI)
   app.use('/dashboards', DashboardsAPI)
-  app.use('/ui', UIAPI)
 
   app.listen(PORT, () =>
     console.warn(`BIData Core service started at port ${PORT}`)

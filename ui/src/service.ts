@@ -1,11 +1,21 @@
 import { Action } from 'react-fetching-library'
 
 export const API = process.env.REACT_APP_API_HOST
+export const AUTH = process.env.REACT_APP_AUTH_HOST
 
-export const requestHostInterceptor = () => async (action: Action) => {
+const SERVICES = {
+  API: process.env.REACT_APP_API_HOST,
+  AUTH: process.env.REACT_APP_AUTH_HOST
+}
+
+export type ServicePointer = {
+  service?: 'API' | 'AUTH'
+}
+
+export const requestHostInterceptor = () => async (action: Action & ServicePointer) => {
   return {
     ...action,
-    endpoint: `${API}${action.endpoint}`,
+    endpoint: `${SERVICES[action.service || 'API']}${action.endpoint}`,
   }
 }
 
@@ -18,12 +28,12 @@ export const fetchConnectivityAction: (connection: any) => Action = ({
   _id,
 }) => ({
   method: 'GET',
-  endpoint: `/ui/connections/${_id}/connectivity`,
+  endpoint: `/connections/${_id}/connectivity`,
 })
 
 export const fetchDriversAction: Action = {
   method: 'GET',
-  endpoint: '/ui/connections/drivers',
+  endpoint: '/connections/drivers',
 }
 
 export type ConectionFormData = {
@@ -163,4 +173,19 @@ export const fetchDashboardAction: (dashboardId: string) => Action = (
 ) => ({
   method: 'GET',
   endpoint: `/dashboards/${dashboardId}`,
+})
+
+export const fetchUserForToken: (token: string) => Action & ServicePointer = (
+  token
+) => ({
+  method: 'GET',
+  endpoint: `/tokens/user?token=${token}`,
+  service: 'AUTH'
+})
+
+export const loginWithGoogleAction: (auth: any) => Action = (auth) => ({
+  method: 'POST',
+  endpoint: '/tokens/google',
+  service: 'AUTH',
+  body: auth
 })
