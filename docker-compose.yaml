@@ -2,7 +2,7 @@ version: '3.7'
 services:
   bidata-core:
     build:
-      context: .
+      context: ./core
       target: base
       args:
         ENV: local
@@ -10,17 +10,30 @@ services:
     ports:
       - 9000:9000
     volumes:
-      - .:/usr/src/app
+      - ./core:/usr/src/app
     command: yarn dev
 
-  bidata-mongo-core:
+  bidata-auth:
+    build:
+      context: ./auth
+      target: base
+      args:
+        ENV: local
+    image: bidata-auth
+    ports:
+      - 9001:9000
+    volumes:
+      - ./auth:/usr/src/app
+    command: yarn dev
+
+  mongo-core:
     image: mongo:latest
     environment:
       MONGO_INITDB_DATABASE: bidata
     volumes:
       - mongodb_data_container:/data/db
 
-  bidata-postgres:
+  postgres:
     image: postgres
     restart: always
     environment:
@@ -30,13 +43,13 @@ services:
     volumes:
       - postgres_data_container:/var/lib/postgresql/data
 
-  bidata-mongo-express:
+  mongo-express:
     image: mongo-express:latest
     environment:
-      - ME_CONFIG_MONGODB_SERVER=bidata-mongo-core
+      - ME_CONFIG_MONGODB_SERVER=mongo-core
       - ME_CONFIG_MONGODB_PORT=27017
     depends_on:
-        - bidata-mongo-core
+      - mongo-core
     ports:
       - 27080:8081
 

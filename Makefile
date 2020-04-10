@@ -1,5 +1,7 @@
 .PHONY:
 
+install:
+	./setup
 stop:
 	docker-compose down
 

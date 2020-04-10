@@ -1,0 +1,41 @@
+{
+  "name": "bidata-auth",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "author": "MGrin",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./build/index.js",
+    "dev": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
+    "lint": "tslint --project tsconfig.json",
+    "prettier:check": "prettier --parser typescript --single-quote --list-different \"src/**/*.ts\"",
+    "prettier:write": "prettier --parser typescript --single-quote --write \"src/**/*.ts\""
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.6",
+    "@types/helmet": "^0.0.45",
+    "@types/mongodb": "^3.5.2",
+    "@types/node-rsa": "^1.0.0",
+    "@types/npm": "^2.0.31",
+    "husky": "^4.2.3",
+    "prettier": "^1.19.1",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "tslint": "^6.1.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^3.21.3",
+    "mongodb": "^3.5.5",
+    "node-rsa": "^1.0.7"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run prettier:write"
+    }
+  }
+}

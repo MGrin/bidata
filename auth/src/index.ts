@@ -3,12 +3,6 @@ import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import { ObjectId } from 'mongodb'
-import ConnectionsAPI, { SUPPORTED_DRIVERS } from './api/connections'
-import QuestionsAPI from './api/questions'
-import ExecutionsAPI from './api/executions'
-import ResultsAPI from './api/results'
-import DashboardsAPI from './api/dashboards'
-import UIAPI from './api/ui'
 import ConnectionsFactory from './connections'
 import MongoConnection from './connections/mongo'
 import { encrypt } from './crypto'
@@ -22,7 +16,7 @@ const main = async () => {
   const coreConnection = ConnectionsFactory.createConnection({
     _id: new ObjectId(),
     name: 'bidata_core',
-    driver: SUPPORTED_DRIVERS.mongodb,
+    driver: 'mongodb',
     params: {
       dsn: encrypt(MONGO_URL),
     },
@@ -31,20 +25,15 @@ const main = async () => {
 
   await coreConnection.checkConectivity()
   await ConnectionsFactory.loadConnections(coreConnection)
+
   const app = express()
   app.use(helmet())
   app.use(cors())
   app.use(express.json())
 
-  app.use('/connections', ConnectionsAPI)
-  app.use('/questions', QuestionsAPI)
-  app.use('/executions', ExecutionsAPI)
-  app.use('/results', ResultsAPI)
-  app.use('/dashboards', DashboardsAPI)
-  app.use('/ui', UIAPI)
 
   app.listen(PORT, () =>
-    console.warn(`BIData Core service started at port ${PORT}`)
+    console.warn(`BIData Auth service started at port ${PORT}`)
   )
 }
 

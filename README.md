@@ -15,19 +15,18 @@ You can easily start BIData locally. For a moment it's composed from 2 component
 
 ## API
 ```bash
-cd core
-yarn
-mv .env.local .env
+make install
 make dev
 ```
 
-This will bootstrap the backend core service with a list of usefull containers for local work:
+This will bootstrap the backend core services with a list of usefull containers for local work:
+* Core API, available at `localhost:9000`
+* Auth API, available at `localhost:9001`
 * MongoDB container as a database for BIData backend
 * PostgreSQL container as a clean database to test BIData features against Posgres
 * `mongo-express` container serving a frontend for MongoDB database. Accessible at port `27080`
 * `dpage/pgadmin4` containere serving a frontend for Postgres database. Accessible at port `54080`, credentials `admin@bidata.local:password`
 
-The API will be accessible at `localhost:9000`
 
 ## Frontend
 ```bash
