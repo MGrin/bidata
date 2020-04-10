@@ -10,15 +10,15 @@ type UseResultState = {
   execution?: any
   result?: any
   loading: boolean
-  error: boolean
+  error: null | boolean | string
 }
 type UseResultAction = {
   type:
-    | 'START_QUERY'
-    | 'FINISH_QUERY_SUCCESSFULLY'
-    | 'FINISH_QUERY_WITH_ERROR'
-    | 'FINISH_QUERY_WITH_ERROR'
-    | 'REPLACE_EXECUTION'
+  | 'START_QUERY'
+  | 'FINISH_QUERY_SUCCESSFULLY'
+  | 'FINISH_QUERY_WITH_ERROR'
+  | 'FINISH_QUERY_WITH_ERROR'
+  | 'REPLACE_EXECUTION'
   payload?: any
 }
 type UseResultReducer = React.Reducer<UseResultState, UseResultAction>
@@ -74,6 +74,7 @@ const resultReducer: UseResultReducer = (state, action) => {
     case 'REPLACE_EXECUTION':
       return {
         ...state,
+        error: false,
         execution: action.payload,
       }
 
@@ -91,6 +92,10 @@ export const useResult = (onResultUpdate: (result: any) => void) => {
   >(resultReducer, initialState, initResultState)
 
   const setExecution = (newExecution: any) => {
+    if (newExecution && (!execution || execution._id !== newExecution._id)) {
+      dispatch({ type: 'REPLACE_EXECUTION', payload: newExecution })
+    }
+
     if (newExecution.state === 'CREATED' || newExecution.state === 'RUNNING') {
       dispatch({ type: 'START_QUERY' })
       setTimeout(
@@ -100,7 +105,7 @@ export const useResult = (onResultUpdate: (result: any) => void) => {
       if (FETCH_TIMEOUT < EXECUTION_FETCH_TIMEOUT_MAX) {
         FETCH_TIMEOUT += EXECUTION_FETCH_TIMEOUT_INCREMENT
       }
-    } else if (newExecution.state === 'DONE' && !error) {
+    } else if (newExecution.state === 'DONE') {
       FETCH_TIMEOUT = EXECUTION_FETCH_TIMEOUT_INCREMENT
       query(fetchResultAction(newExecution.results))
         .then(({ payload }) => {
@@ -112,10 +117,6 @@ export const useResult = (onResultUpdate: (result: any) => void) => {
         })
     } else if (newExecution.state === 'ERROR') {
       dispatch({ type: 'FINISH_QUERY_WITH_ERROR', payload: newExecution.error })
-    }
-
-    if (newExecution && (!execution || execution._id !== newExecution._id)) {
-      dispatch({ type: 'REPLACE_EXECUTION', payload: newExecution })
     }
   }
 
