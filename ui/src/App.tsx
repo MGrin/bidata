@@ -10,8 +10,9 @@ import {
   Question,
   Dashboards,
   Dashboard,
+  Landing,
 } from './pages'
-import { Header } from './components'
+import { Header, ProtectedRoute, UserProvider } from './components'
 
 const client = createClient({
   requestInterceptors: [requestHostInterceptor],
@@ -20,16 +21,19 @@ const client = createClient({
 export default () => (
   <ClientContextProvider client={client}>
     <Router>
-      <Header />
-      <Switch>
-        <Route path="/dashboards/:dashboard_id" component={Dashboard} />
-        <Route path="/dashboards" component={Dashboards} />
-        <Route path="/questions/:question_id" component={Question} />
-        <Route path="/questions" component={Questions} />
-        <Route path="/admin/connections" component={Connections} />
-        <Route path="/admin" component={Admin} />
-        <Route path="/" component={Home} />
-      </Switch>
+      <UserProvider>
+        <Header />
+        <Switch>
+          <ProtectedRoute path="/home" component={Home} />
+          <ProtectedRoute path="/dashboards/:dashboard_id" component={Dashboard} />
+          <ProtectedRoute path="/dashboards" component={Dashboards} />
+          <ProtectedRoute path="/questions/:question_id" component={Question} />
+          <ProtectedRoute path="/questions" component={Questions} />
+          <ProtectedRoute path="/admin/connections" component={Connections} />
+          <ProtectedRoute path="/admin" component={Admin} />
+          <Route path="/" component={Landing} />
+        </Switch>
+      </UserProvider>
     </Router>
   </ClientContextProvider>
 )

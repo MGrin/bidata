@@ -6,6 +6,8 @@ import { ObjectId } from 'mongodb'
 import ConnectionsFactory from './connections'
 import MongoConnection from './connections/mongo'
 import { encrypt } from './crypto'
+import UsersAPI from './api/users'
+import TokensAPI from './api/tokens'
 
 dotenv.config()
 
@@ -31,6 +33,8 @@ const main = async () => {
   app.use(cors())
   app.use(express.json())
 
+  app.use('/users', UsersAPI)
+  app.use('/tokens', TokensAPI)
   app.listen(PORT, () =>
     console.warn(`BIData Auth service started at port ${PORT}`)
   )

@@ -167,10 +167,30 @@ const handleDeleteConnection = async (req: Request, res: Response) => {
   return res.status(200).send()
 }
 
+const handleGetDrivers = async (req: Request, res: Response) => {
+  return res.send(Object.keys(SUPPORTED_DRIVERS))
+}
+
+const handleGetConnectionConnectivity = async (req: Request, res: Response) => {
+  const id = new ObjectId(req.params.id)
+  const core = ConnectionsFactory.get() as MongoConnection
+  const connectionDesction = await core.client
+    .collection('Connections')
+    .findOne({ _id: id })
+  if (!connectionDesction) {
+    throw new APIError('No connection found', 404)
+  }
+
+  const connection = ConnectionsFactory.get(connectionDesction.name)
+  await connection.checkConectivity()
+  return res.send()
+}
+
 ConnectionsAPI.get('/', withCatch(handleListConnections))
+ConnectionsAPI.get('/drivers', withCatch(handleGetDrivers))
 ConnectionsAPI.get('/:id', withCatch(handleGetConnection))
+ConnectionsAPI.get('/:id/connectivity', withCatch(handleGetConnectionConnectivity))
 ConnectionsAPI.post('/', withCatch(handleCreateConnection))
 ConnectionsAPI.put('/:id', withCatch(handleUpdateConnection))
 ConnectionsAPI.delete('/:id', withCatch(handleDeleteConnection))
-
 export default ConnectionsAPI
