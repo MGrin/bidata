@@ -27,7 +27,6 @@ This will bootstrap the backend core services with a list of usefull containers 
 * `mongo-express` container serving a frontend for MongoDB database. Accessible at port `27080`
 * `dpage/pgadmin4` containere serving a frontend for Postgres database. Accessible at port `54080`, credentials `admin@bidata.local:password`
 
-
 ## Frontend
 ```bash
 cd ui
