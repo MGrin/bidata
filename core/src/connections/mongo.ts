@@ -5,7 +5,7 @@ import { BIDataMongoConnectionParams } from '../api/connections'
 
 export default class MongoConnection extends AbstractConnection<
   BIDataMongoConnectionParams
-> {
+  > {
   private _client: mongo.MongoClient | null = null
   // @ts-ignore
   public client: mongo.Db
@@ -18,7 +18,7 @@ export default class MongoConnection extends AbstractConnection<
     if (!this._client) {
       this._client = await mongo.MongoClient.connect(this.params.dsn, {
         useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useUnifiedTopology: true,
         numberOfRetries: 1,
         connectTimeoutMS: 5000,
       })

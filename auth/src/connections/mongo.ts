@@ -15,7 +15,7 @@ export default class MongoConnection extends AbstractConnection<any> {
     if (!this._client) {
       this._client = await mongo.MongoClient.connect(this.params.dsn, {
         useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useUnifiedTopology: true,
         numberOfRetries: 1,
         connectTimeoutMS: 5000,
       })
