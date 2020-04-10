@@ -116,7 +116,13 @@ export const useQuestion = (questionId: string) => {
   const [lastExecution, setLastExecution] = React.useState()
 
   React.useEffect(() => {
-    if (question) {
+    if (errorQuestion && question) {
+      setLoading(false)
+      setError(question)
+      return
+    }
+
+    if (!error && question) {
       setLoading(true)
       query(fetchConnectionAction(question.connection_id))
         .then(
@@ -138,7 +144,7 @@ export const useQuestion = (questionId: string) => {
           setError(e)
         })
     }
-  }, [question, query])
+  }, [question, errorQuestion, query])
 
   React.useEffect(() => {
     setLoading(loadingQuestion)
@@ -163,13 +169,15 @@ export const useQuestion = (questionId: string) => {
 
   return {
     loading,
-    error: error || errorQuestion || errorQuestionExecution,
-    question: connection
-      ? {
+    error: error,
+    question: (!error && question) ? (
+      connection
+        ? {
           ...(updatedQuestion || question),
           connection,
         }
-      : undefined,
+        : undefined
+    ) : undefined,
     execution: questionExecution || lastExecution,
     waiting: loadingQuestionUpdate || loadingQuestionExecution,
     errorWaiting: errorQuestionUpdate || errorQuestionExecution,

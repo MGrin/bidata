@@ -2,6 +2,7 @@ import * as React from 'react'
 import { NOOP } from '../utils'
 
 export type User = {
+  _id?: string
   email: string
   firstName: string
   lastName: string

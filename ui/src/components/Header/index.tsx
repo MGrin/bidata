@@ -35,7 +35,6 @@ import NewQuestioForm from './NewQuestionForm'
 import NewDashboardForm from './NewDashboardForm'
 import GoogleIcon from '../GoogleIcon'
 import { useUser } from '../../hooks';
-import classes from '*.module.css';
 
 const Title = () => {
   const location = useLocation<{ title?: string }>()

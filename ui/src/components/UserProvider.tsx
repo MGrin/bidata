@@ -68,7 +68,7 @@ export default ({ children }: { children: any }) => {
           })
       }
     }
-  }, [GAPIInited])
+  }, [GAPIInited, loginWithGoogle, token])
 
   React.useEffect(() => {
     if (!token) {

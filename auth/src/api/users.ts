@@ -48,39 +48,39 @@ export const createUser = async (
 
 const UsersAPI = Router()
 
-const handleCreateUser = async (req: Request, res: Response) => {
-  const data = {
-    email: req.body.email,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-  } as BIDataUser
+// const handleCreateUser = async (req: Request, res: Response) => {
+//   const data = {
+//     email: req.body.email,
+//     firstName: req.body.firstName,
+//     lastName: req.body.lastName,
+//   } as BIDataUser
 
-  if (!data.email || !data.firstName || !data.lastName) {
-    throw new APIError('Provide all required information', 400)
-  }
-  const core = ConnectionsFactory.get() as MongoConnection
-  const existingUser = await core.client
-    .collection('Users')
-    .findOne({ email: data.email })
-  if (existingUser) {
-    throw new APIError('User with provided email already registered', 400)
-  }
+//   if (!data.email || !data.firstName || !data.lastName) {
+//     throw new APIError('Provide all required information', 400)
+//   }
+//   const core = ConnectionsFactory.get() as MongoConnection
+//   const existingUser = await core.client
+//     .collection('Users')
+//     .findOne({ email: data.email })
+//   if (existingUser) {
+//     throw new APIError('User with provided email already registered', 400)
+//   }
 
-  const user = await createUser(SUPPORTED_STRATEGIES.password, data, data)
-  const salt = generateSalt()
-  const hashedPassword = hash(req.body.password, salt)
+//   const user = await createUser(SUPPORTED_STRATEGIES.password, data, data)
+//   const salt = generateSalt()
+//   const hashedPassword = hash(req.body.password, salt)
 
-  await core.client.collection('Credentials').insertOne({
-    user_id: user._id,
-    email: data.email,
-    password: hashedPassword,
-    salt: salt,
-    strategy: SUPPORTED_STRATEGIES.password,
-  })
+//   await core.client.collection('Credentials').insertOne({
+//     user_id: user._id,
+//     email: data.email,
+//     password: hashedPassword,
+//     salt: salt,
+//     strategy: SUPPORTED_STRATEGIES.password,
+//   })
 
-  const token = await createToken(user._id, SUPPORTED_STRATEGIES.password)
-  return res.send({ token })
-}
+//   const token = await createToken(user._id, SUPPORTED_STRATEGIES.password)
+//   return res.send({ token })
+// }
 
 const handleGetUserById = async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id)
@@ -91,5 +91,5 @@ const handleGetUserById = async (req: Request, res: Response) => {
 }
 
 UsersAPI.get('/:id', withCatch(handleGetUserById))
-UsersAPI.post('/', withCatch(handleCreateUser))
+// UsersAPI.post('/', withCatch(handleCreateUser))
 export default UsersAPI

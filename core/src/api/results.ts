@@ -1,11 +1,12 @@
-import { Router, Request, Response } from 'express'
+import { Router, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import ConnectionsFactory from '../connections'
 import MongoConnection from '../connections/mongo'
 import { APIError, withCatch } from './utils'
+import { AuthRequest, requiresAuth } from '../middlewares'
 
 const ResultsAPI = Router()
-const handleGetResult = async (req: Request, res: Response) => {
+const handleGetResult = async (req: AuthRequest, res: Response) => {
   const id = new ObjectId(req.params.id)
   const core = ConnectionsFactory.get() as MongoConnection
 
@@ -18,5 +19,5 @@ const handleGetResult = async (req: Request, res: Response) => {
   return res.send(result)
 }
 
-ResultsAPI.get('/:id', withCatch(handleGetResult))
+ResultsAPI.get('/:id', requiresAuth(), withCatch(handleGetResult))
 export default ResultsAPI

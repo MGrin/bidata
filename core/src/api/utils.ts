@@ -1,4 +1,5 @@
-import { Request, Response } from 'express'
+import { Response, NextFunction } from 'express'
+import { AuthRequest } from '../middlewares'
 
 export class APIError {
   public message: string
@@ -10,9 +11,9 @@ export class APIError {
 }
 
 export const withCatch = (
-  handler: (req: Request, res: Response) => Promise<any>
-) => (req: Request, res: Response) =>
-  handler(req, res).catch(e => {
-    const apiError = new APIError(e.message, e.status)
-    return res.status(apiError.status).send(apiError)
-  })
+  handler: (req: AuthRequest, res: Response, next?: NextFunction) => Promise<any>
+) => (req: AuthRequest, res: Response, next?: NextFunction) =>
+    handler(req, res, next).catch(e => {
+      const apiError = new APIError(e.message, e.status)
+      return res.status(apiError.status).send(apiError)
+    })

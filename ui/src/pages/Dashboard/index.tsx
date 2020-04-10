@@ -10,7 +10,6 @@ type TileProps = {
 }
 
 const Tile = ({ questionId }: TileProps) => {
-  const history = useHistory()
   const {
     loading,
     error,

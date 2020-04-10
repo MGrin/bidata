@@ -16,6 +16,9 @@ export const requestHostInterceptor = () => async (action: Action & ServicePoint
   return {
     ...action,
     endpoint: `${SERVICES[action.service || 'API']}${action.endpoint}`,
+    headers: {
+      'x-auth': localStorage.getItem('token') || ''
+    }
   }
 }
 
