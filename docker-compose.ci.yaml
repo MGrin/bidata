@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  core:
+    build:
+      context: ./core
+      target: build
+    image: mgrin/quester/bidata/core:latest
+
+  auth:
+    build:
+      context: ./auth
+      target: build
+    image: mgrin/quester/bidata/auth:latest
