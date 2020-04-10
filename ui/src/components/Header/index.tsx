@@ -80,12 +80,16 @@ type DrawerMenuProps = {
 
 const DrawerMenu = ({ open, navigate, onClose }: DrawerMenuProps) => {
   const location = useLocation()
+  const history = useHistory()
 
   return (
     <Drawer anchor="left" open={open} onClose={onClose}>
       <Box width={300}>
         <List dense>
-          <ListItem>
+          <ListItem onClick={() => {
+            history.push('/')
+            onClose()
+          }}>
             <Typography variant="h3">BIData</Typography>
           </ListItem>
           <ListItem
@@ -182,16 +186,16 @@ const HeaderContent = ({
               <AddCircleIcon />
             </IconButton>
           ) : (
-            <Button
-              variant="outlined"
-              color="inherit"
-              size="small"
-              startIcon={<AddIcon />}
-              onClick={openAddNewSelector}
-            >
-              Add new ...
-            </Button>
-          )}
+              <Button
+                variant="outlined"
+                color="inherit"
+                size="small"
+                startIcon={<AddIcon />}
+                onClick={openAddNewSelector}
+              >
+                Add new ...
+              </Button>
+            )}
           <Box m={1} />
           <IconButton onClick={openUserMenu}>
             <Avatar

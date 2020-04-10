@@ -90,9 +90,9 @@ export default ({ children }: { children: any }) => {
           setUser(undefined)
           setLoading(false)
         } else {
+          localStorage.setItem('token', token)
           setUser(payload)
           setLoading(false)
-          localStorage.setItem('token', token)
         }
       })
     }
