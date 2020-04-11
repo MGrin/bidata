@@ -33,9 +33,6 @@ const main = async () => {
     creator_id: new ObjectId(),
     private: true
   }) as MongoConnection
-  const analyticsConnection = new MongoConnection({
-    dsn: encrypt(ANALYTICS_MONGO_URL),
-  })
 
   await coreConnection.checkConectivity()
   await ConnectionsFactory.loadConnections(coreConnection)
@@ -45,7 +42,13 @@ const main = async () => {
   app.use(cors())
   app.use(express.json())
   app.use(auth(AUTH_HOST))
-  app.use(analytics(analyticsConnection))
+  if (ANALYTICS_MONGO_URL !== 'DISABLE') {
+    const analyticsConnection = new MongoConnection({
+      dsn: encrypt(ANALYTICS_MONGO_URL),
+    })
+
+    app.use(analytics(analyticsConnection))
+  }
 
   app.use('/connections', ConnectionsAPI)
   app.use('/questions', QuestionsAPI)
