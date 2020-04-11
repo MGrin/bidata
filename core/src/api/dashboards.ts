@@ -28,9 +28,6 @@ const handleListDashboards = async (req: AuthRequest, res: Response) => {
       {
         owner_id: req.user._id,
       },
-      {
-        private: false,
-      },
     ],
   })
   const dashboardsAsArr = await dashboards.toArray()

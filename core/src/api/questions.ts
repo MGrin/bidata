@@ -69,10 +69,6 @@ const handleListQuestions = async (req: AuthRequest, res: Response) => {
     $or: [
       {
         owner_id: req.user._id,
-        private: true,
-      },
-      {
-        private: false,
       },
     ],
   })
