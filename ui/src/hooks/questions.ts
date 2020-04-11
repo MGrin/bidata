@@ -169,14 +169,14 @@ export const useQuestion = (questionId: string) => {
 
   return {
     loading,
-    error: error,
+    error,
     question:
       !error && question
         ? connection
           ? {
-              ...(updatedQuestion || question),
-              connection,
-            }
+            ...(updatedQuestion || question),
+            connection,
+          }
           : undefined
         : undefined,
     execution: questionExecution || lastExecution,

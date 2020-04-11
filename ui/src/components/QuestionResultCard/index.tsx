@@ -88,7 +88,7 @@ export default React.memo(
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
                 labelRowsPerPage={isXS ? null : undefined}
-                labelDisplayedRows={isXS ? ({ page }) => page + 1 : undefined}
+                labelDisplayedRows={isXS ? ({ page: pabeNumber }) => pabeNumber + 1 : undefined}
               />
             </Paper>
           </Box>
