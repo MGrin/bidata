@@ -103,8 +103,9 @@ const handleCreateConnection = async (req: AuthRequest, res: Response) => {
   } as BIDataConnection
 
   const clearDSN = body.params.dsn
+  const scheme = body.params.dsn.split('://')[0]
   const parser = new ConnectionStringParser({
-    scheme: body.driver,
+    scheme,
     hosts: [],
   })
 
