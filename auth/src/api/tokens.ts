@@ -82,7 +82,6 @@ const handleExchangeGoogleForToken = async (req: Request, res: Response) => {
     data
   )
 
-  console.log(user)
   const token = await createToken(user._id, SUPPORTED_STRATEGIES.google)
   return res.send({ token })
 }
