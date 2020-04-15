@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for service in `docker-compose ps --services | grep bidata-`
+do
+	folder_name=`echo "$service" | sed -e "s/^bidata-//"`
+	cd $folder_name
+	yarn build
+	cd ..
+done
+
+pm2 restart ecosystem.config.js

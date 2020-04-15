@@ -10,7 +10,7 @@ module.exports = {
     script: 'core/dist/index.js',
     instances: 2,
     autorestart: true,
-    watch: false,
+    watch: true,
     max_memory_restart: '600M',
     env: {
         NODE_ENV: 'production',
@@ -28,7 +28,7 @@ module.exports = {
     script: 'auth/dist/index.js',
     instances: 2,
     autorestart: true,
-    watch: false,
+    watch: true,
     max_memory_restart: '600M',
     env: {
         NODE_ENV: 'production',
