@@ -13,6 +13,7 @@ build-ci:
 
 deploy:
 	./deploy
+
 dev: build
 	docker-compose up -d
 	docker-compose ps
